@@ -108,15 +108,15 @@
                         <label class="fw-bold text-uppercase small text-muted mb-2">Bukti Pendukung</label>
                         <div class="list-group mb-3">
                             <?php if (count($bukti_pendukung) > 0) : ?>
-                                <?php foreach ($bukti_pendukung as $bukti) : ?>
-                                    <a href="<?= base_url('uploads/bukti/' . $bukti['nama_file']); ?>" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border">
-                                        <div class="text-truncate">
-                                            <i class="bi bi-file-earmark-text text-primary me-2"></i>
-                                            <span class="small font-monospace"><?= $bukti['nama_file']; ?></span>
-                                        </div>
-                                        <i class="bi bi-download text-muted"></i>
-                                    </a>
-                                <?php endforeach; ?>
+                            <?php foreach ($bukti_pendukung as $bukti) : ?>
+                                <a href="<?= base_url($bukti['file_path']); ?>" download="<?= $bukti['file_name']; ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border">
+                                    <div class="text-truncate">
+                                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                        <span class="small"><?= $bukti['file_name']; ?></span>
+                                    </div>
+                                    <i class="bi bi-download text-muted"></i>
+                                </a>
+                            <?php endforeach; ?>
                             <?php else : ?>
                                 <small class="text-muted d-block ps-2 italic">Tidak ada file bukti diunggah.</small>
                             <?php endif; ?>
