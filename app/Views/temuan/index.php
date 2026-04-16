@@ -71,17 +71,14 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <div class="btn-group">
-                                        <a href="/temuan/show/<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary rounded-start-pill px-3">
-                                            <i class="bi bi-eye"></i> Detail
-                                        </a>
-                                        <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                        </a>
-                                        <a href="/temuan/delete/<?= $row['id'] ?>" class="btn btn-sm btn-outline-danger rounded-end-pill btn-hapus-temuan" data-id="<?= $row['id'] ?>" data-judul="<?= htmlspecialchars($row['judul_temuan']) ?>">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </a>
-                                    </div>
+                                    <a href="/temuan/show/<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <?= (session()->get('role_id') == 2) ? 'Tindak Lanjut / Detail' : 'Detail' ?>
+                                    </a>
+
+                                    <?php if (session()->get('role_id') == 1) : ?>
+                                        <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <a href="/temuan/delete/<?= $row['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin hapus?')">Hapus</a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
