@@ -31,9 +31,9 @@
 
         <?php if ($role_id == 2) : ?>
             <li class="nav-item">
-              <a class="nav-link nav-item-modern" href="/tindak-lanjut">
-                <i class="bi bi-arrow-repeat"></i>
-                <span>Konfirmasi</span>
+              <a class="nav-link nav-item-modern <?= (url_is('temuan*') || url_is('tindak-lanjut*')) ? 'active' : '' ?>" href="/temuan">
+                <i class="bi bi-list-check"></i>
+                <span>Temuan Saya</span>
               </a>
             </li>
         <?php endif; ?>
