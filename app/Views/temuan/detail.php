@@ -93,8 +93,31 @@
                         </div>
                         <h6 class="fw-bold">Menunggu Tanggapan PIC</h6>
                         <p class="text-muted small">Auditee belum memberikan respon tindak lanjut untuk temuan ini.</p>
-                        <?php if (session()->get('role_id') == 2 && session()->get('id') == $temuan['pic_id']) : ?>
-                            <a href="/tindak-lanjut/create/<?= $temuan['id']; ?>" class="btn btn-primary rounded-pill btn-sm mt-3 px-4">Kirim Tanggapan Sekarang</a>
+                        <?php if (session()->get('role_id') == 2 && session()->get('id') == $temuan['pic_id']) :?>
+                            <?php 
+                                if (empty($tindak_lanjut) || $tindak_lanjut['status_verifikasi'] == 'revision_required' || $tindak_lanjut['status_verifikasi'] == 'rejected') :                            
+                            ?>
+                                
+                                <?php if (!empty($tindak_lanjut) && $tindak_lanjut['status_verifikasi'] == 'revision_required'): ?>
+                                    <div class="alert alert-danger mb-3">
+                                        <strong><i class="bi bi-exclamation-triangle"></i> Revisi Diperlukan!</strong><br>
+                                        Catatan: <?= $tindak_lanjut['catatan_auditor']; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <a href="<?= base_url('tindak-lanjut/create/' . $temuan['id']); ?>" class="btn btn-primary rounded-pill px-4">
+                                    <i class="bi bi-send me-2"></i> Kirim Tindak Lanjut
+                                </a>
+
+                            <?php elseif ($tindak_lanjut['status_verifikasi'] == 'approved') : ?>
+                                
+                                <div class="alert alert-success text-center">
+                                    <h5><i class="bi bi-check-circle-fill"></i> TERVERIFIKASI</h5>
+                                    <p class="mb-0">Bukti Anda sedang dalam proses persetujuan Manajemen.</p>
+                                </div>
+
+                            <?php endif; ?>
+
                         <?php endif; ?>
                     </div>
                 <?php else : ?>
@@ -156,7 +179,15 @@
                             <div class="fs-4 fw-bold mb-1">
                                 <?= ($tindak_lanjut['status_verifikasi'] == 'approved') ? '<i class="bi bi-check-circle-fill"></i> TERVERIFIKASI' : '<i class="bi bi-arrow-repeat"></i> SEDANG DIREVISI'; ?>
                             </div>
-                            <div class="small fw-normal"><?= esc($tindak_lanjut['catatan_auditor']); ?></div>
+                            <div class="small fw-normal mb-3"><?= esc($tindak_lanjut['catatan_auditor']); ?></div>
+
+                            <?php if (session()->get('role_id') == 2 && session()->get('id') == $temuan['pic_id'] && $tindak_lanjut['status_verifikasi'] == 'revision_required') : ?>
+                                <hr>
+                                <p class="small text-muted mb-3">Klik tombol di bawah untuk mengunggah revisi tindak lanjut Anda.</p>
+                                <a href="<?= base_url('tindak-lanjut/create/' . $temuan['id']); ?>" class="btn btn-primary rounded-pill px-4">
+                                    <i class="bi bi-pencil-square me-2"></i> Kirim Revisi
+                                </a>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>
