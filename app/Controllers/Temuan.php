@@ -128,6 +128,11 @@ class Temuan extends BaseController
         $keputusan        = $this->request->getPost('keputusan');
         $catatan          = $this->request->getPost('catatan_auditor');
 
+        $temuan = $this->temuanModel->find($temuan_id);
+        if (!$temuan || $temuan['status_progress'] !== 'On Progress') {
+            return redirect()->back()->with('error', 'Temuan ini sudah dalam tahap Approval atau sudah Closed.');
+        }
+
         if ($keputusan == 'approve') {
             $this->tindakLanjutModel->update($tindak_lanjut_id, [
                 'status_verifikasi' => 'approved',
@@ -136,11 +141,11 @@ class Temuan extends BaseController
             ]);
 
             $this->temuanModel->update($temuan_id, [
-                'status_progress' => 'Closed'
+                'status_progress' => 'Waiting Kadep Approval'
             ]);
 
-            $message = 'Tindak lanjut disetujui. Status temuan resmi ditutup (Closed).';
-            $aksi_log = 'Approve Bukti';
+            $message = 'Tindak lanjut disetujui. Sekarang menunggu persetujuan Kepala Departemen.';
+            $aksi_log = 'Approve Bukti (Ke Kadep)';
         } else {
             $this->tindakLanjutModel->update($tindak_lanjut_id, [
                 'status_verifikasi' => 'revision_required',

@@ -40,7 +40,7 @@
 
         <?php if (in_array($role_id, [3, 4, 5])) : ?>
             <li class="nav-item">
-              <a class="nav-link nav-item-modern" href="/approval">
+              <a class="nav-link nav-item-modern <?= url_is('/approval') ? "active" : "" ?>" href="/approval">
                 <i class="bi bi-check-circle"></i>
                 <span>Approval</span>
               </a>

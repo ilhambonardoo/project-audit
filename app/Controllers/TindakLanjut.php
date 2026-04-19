@@ -48,18 +48,40 @@ class TindakLanjut extends BaseController
         $temuan_id = $this->request->getPost('temuan_id');
         $fileBukti = $this->request->getFile('file_bukti'); 
 
+        $existingTL = $this->tindakLanjutModel->where('temuan_id', $temuan_id)->first();
+
         if ($fileBukti->isValid() && !$fileBukti->hasMoved()) {
             $newName = $fileBukti->getRandomName();
-            
             $fileBukti->move('uploads/bukti', $newName);
 
-            $this->tindakLanjutModel->save([
-                'temuan_id'         => $temuan_id,
-                'tanggapan_auditee' => $this->request->getPost('tanggapan_auditee'),
-                'status_verifikasi' => 'pending'
+            if ($existingTL) {
+                $oldBukti = $this->buktiModel->where('tindak_lanjut_id', $existingTL['id'])->findAll();
+                foreach ($oldBukti as $b) {
+                    if (file_exists($b['file_path'])) {
+                        unlink($b['file_path']);
+                    }
+                }
+                $this->buktiModel->where('tindak_lanjut_id', $existingTL['id'])->delete();
+
+                $this->tindakLanjutModel->update($existingTL['id'], [
+                    'tanggapan_auditee' => $this->request->getPost('tanggapan_auditee'),
+                    'status_verifikasi' => 'pending',
+                    'catatan_auditor'   => null,
+                    'updated_at'        => date('Y-m-d H:i:s')
+                ]);
+                $tindakLanjutId = $existingTL['id'];
+            } else {
+                $this->tindakLanjutModel->save([
+                    'temuan_id'         => $temuan_id,
+                    'tanggapan_auditee' => $this->request->getPost('tanggapan_auditee'),
+                    'status_verifikasi' => 'pending'
+                ]);
+                $tindakLanjutId = $this->tindakLanjutModel->insertID();
+            }
+
+            $this->temuanModel->update($temuan_id, [
+                'status_progress' => 'On Progress'
             ]);
-            
-            $tindakLanjutId = $this->tindakLanjutModel->insertID();
 
             $this->buktiModel->save([
                 'tindak_lanjut_id' => $tindakLanjutId,
@@ -68,7 +90,7 @@ class TindakLanjut extends BaseController
                 'uploaded_at'      => date('Y-m-d H:i:s')
             ]);
 
-            return redirect()->to('/temuan/show/' . $temuan_id)->with('success', 'Berhasil upload!');
+            return redirect()->to('/temuan/show/' . $temuan_id)->with('success', 'Tindak lanjut/revisi berhasil dikirim. Menunggu verifikasi auditor.');
         } else {
             return redirect()->back()->with('error', 'File tidak valid atau gagal diupload.');
         }
