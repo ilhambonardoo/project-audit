@@ -31,3 +31,8 @@ $routes->group('tindak-lanjut', ['filter' => 'role_id:2'], function($routes) {
     $routes->get('create/(:num)', 'TindakLanjut::create/$1');
     $routes->post('store', 'TindakLanjut::store');
 });
+
+$routes->group('approval', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'Approval::index');
+    $routes->post('process', 'Approval::process');
+});
