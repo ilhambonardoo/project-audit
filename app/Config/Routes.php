@@ -36,6 +36,8 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->post('store', 'TindakLanjut::store');
     });
 
+    $routes->get('tindak-lanjut/download/(:num)', 'TindakLanjut::download/$1');
+
     $routes->group('approval', function($routes) {
         $routes->get('/', 'Approval::index');
         $routes->post('process', 'Approval::process');

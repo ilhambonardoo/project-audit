@@ -73,8 +73,8 @@
 
                     <div class="mb-5">
                         <label class="form-label fw-bold small text-muted">Upload Bukti Pendukung <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control shadow-none" name="file_bukti" accept=".pdf, .jpg, .jpeg, .png" required>
-                        <div class="form-text small text-danger"><i class="bi bi-info-circle me-1"></i> Format diizinkan: PDF, JPG, PNG. Maksimal ukuran: 5MB.</div>
+                        <input type="file" class="form-control shadow-none" name="file_bukti" accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .zip" required>
+                        <div class="form-text small text-danger"><i class="bi bi-info-circle me-1"></i> Format diizinkan: PDF, JPG, PNG, DOCX, XLSX, ZIP. Maksimal ukuran: 20MB.</div>
                     </div>
 
                     <div class="d-grid">
