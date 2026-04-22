@@ -37,7 +37,7 @@
     </div>
 <?php endif; ?>
 
-<div class="row g-3 mb-5">
+<div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 bg-info text-white h-100">
+        <div class="card border-0 shadow-sm rounded-4 bg-danger text-white h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
                     <h6 class="fw-light mb-1">Status Open</h6>
@@ -64,8 +64,8 @@
         <div class="card border-0 shadow-sm rounded-4 bg-warning text-dark h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
-                    <h6 class="fw-light mb-1">On Progress</h6>
-                    <h2 class="fw-bold mb-0"><?= $on_progress ?></h2>
+                    <h6 class="fw-light mb-1">Status Proses</h6>
+                    <h2 class="fw-bold mb-0"><?= $proses ?></h2>
                 </div>
                 <i class="bi bi-arrow-repeat display-4 opacity-50"></i>
             </div>
@@ -84,82 +84,119 @@
     </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
-        <i class="bi bi-bell-fill text-danger me-2 fs-5"></i>
-        <h6 class="mb-0 fw-bold">Early Warning System (Mendekati Deadline)</h6>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light text-muted small">
-                    <tr>
-                        <th class="ps-4 py-3">Judul Temuan</th>
-                        <th>Klausul</th>
-                        <th>Status</th>
-                        <th>Batas Waktu</th>
-                        <th>Sisa Waktu</th>
-                        <th class="text-center pe-4">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($early_warning)) : ?>
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">
-                                <i class="bi bi-check2-circle fs-2 d-block mb-2 text-success"></i>
-                                Aman. Tidak ada temuan yang mendekati batas waktu.
-                            </td>
-                        </tr>
-                    <?php else : ?>
-                        <?php foreach ($early_warning as $row) : 
-                            $tgl_deadline = strtotime($row['deadline']);
-                            $tgl_sekarang = strtotime($today);
-                            $selisih_detik = $tgl_deadline - $tgl_sekarang;
-                            $sisa_hari = floor($selisih_detik / (60 * 60 * 24));
-
-                            if ($sisa_hari < 0) {
-                                $badge_color = 'bg-danger';
-                                $status_text = 'Overdue (' . abs($sisa_hari) . ' hari)';
-                            } elseif ($sisa_hari <= 3) {
-                                $badge_color = 'bg-danger bg-opacity-75'; 
-                                $status_text = $sisa_hari . ' Hari Lagi';
-                            } elseif ($sisa_hari <= 7) {
-                                $badge_color = 'bg-warning text-dark';
-                                $status_text = $sisa_hari . ' Hari Lagi';
-                            } elseif ($sisa_hari <= 10) {
-                                $badge_color = 'bg-info text-dark';
-                                $status_text = $sisa_hari . ' Hari Lagi';
-                            } elseif ($sisa_hari <= 20) {
-                                $badge_color = 'bg-primary text-white';
-                                $status_text = $sisa_hari . ' Hari Lagi';
-                            } elseif ($sisa_hari <= 30) {
-                                $badge_color = 'bg-success bg-opacity-75 text-white';
-                                $status_text = $sisa_hari . ' Hari Lagi';
-                            } else {
-                                $badge_color = 'bg-success';
-                                $status_text = $sisa_hari . ' Hari Lagi';
-                            }
-                        ?>
+<div class="row mb-5">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
+                <i class="bi bi-bell-fill text-danger me-2 fs-5"></i>
+                <h6 class="mb-0 fw-bold">Early Warning System (Mendekati Deadline)</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-muted small">
                             <tr>
-                                <td class="ps-4 fw-bold text-dark"><?= $row['judul_temuan'] ?></td>
-                                <td><?= $row['klausul'] ?></td>
-                                <td>
-                                    <span class="badge border bg-light text-dark fw-normal"><?= $row['status_progress'] ?></span>
-                                </td>
-                                <td><?= date('d M Y', strtotime($row['deadline'])) ?></td>
-                                <td>
-                                    <span class="badge <?= $badge_color ?> rounded-pill px-3"><?= $status_text ?></span>
-                                </td>
-                                <td class="text-center pe-4">
-                                    <a href="/temuan/show/<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary rounded-pill">Lihat Detail</a>
-                                </td>
+                                <th class="ps-4 py-3">Judul Temuan</th>
+                                <th>Status</th>
+                                <th>Batas Waktu</th>
+                                <th>Sisa Waktu</th>
+                                <th class="text-center pe-4">Aksi</th>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($early_warning)) : ?>
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <i class="bi bi-check2-circle fs-2 d-block mb-2 text-success"></i>
+                                        Aman. Tidak ada temuan yang mendekati batas waktu.
+                                    </td>
+                                </tr>
+                            <?php else : ?>
+                                <?php foreach ($early_warning as $row) : 
+                                    $tgl_deadline = strtotime($row['deadline']);
+                                    $tgl_sekarang = strtotime($today);
+                                    $selisih_detik = $tgl_deadline - $tgl_sekarang;
+                                    $sisa_hari = floor($selisih_detik / (60 * 60 * 24));
+
+                                    if ($sisa_hari < 0) {
+                                        $badge_color = 'bg-danger';
+                                        $status_text = 'Overdue (' . abs($sisa_hari) . ' hari)';
+                                    } elseif ($sisa_hari <= 3) {
+                                        $badge_color = 'bg-danger bg-opacity-75'; 
+                                        $status_text = $sisa_hari . ' Hari Lagi';
+                                    } elseif ($sisa_hari <= 7) {
+                                        $badge_color = 'bg-warning text-dark';
+                                        $status_text = $sisa_hari . ' Hari Lagi';
+                                    } else {
+                                        $badge_color = 'bg-success';
+                                        $status_text = $sisa_hari . ' Hari Lagi';
+                                    }
+                                ?>
+                                    <tr>
+                                        <td class="ps-4 small fw-bold text-dark"><?= $row['judul_temuan'] ?></td>
+                                        <td>
+                                            <span class="badge border bg-light text-dark fw-normal"><?= $row['status_progress'] ?></span>
+                                        </td>
+                                        <td><?= date('d M Y', strtotime($row['deadline'])) ?></td>
+                                        <td>
+                                            <span class="badge <?= $badge_color ?> rounded-pill px-3"><?= $status_text ?></span>
+                                        </td>
+                                        <td class="text-center pe-4">
+                                            <a href="/temuan/show/<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary rounded-pill">Lihat Detail</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="mb-0 fw-bold">Analytics: Ketepatan Waktu</h6>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div style="height: 250px; width: 100%;">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                <div class="mt-3 text-center small text-muted">
+                    <p class="mb-0">Perbandingan On Time vs Overdue pada temuan <strong>Closed</strong>.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['On Time', 'Overdue'],
+                datasets: [{
+                    data: [<?= $chart_data['on_time'] ?>, <?= $chart_data['overdue'] ?>],
+                    backgroundColor: ['#198754', '#dc3545'],
+                    hoverOffset: 4,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
 
 <?= $this->endSection() ?>

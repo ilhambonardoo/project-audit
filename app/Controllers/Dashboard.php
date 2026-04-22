@@ -24,46 +24,65 @@ class Dashboard extends BaseController
         $user_id = $session->get('id');
         $today   = date('Y-m-d');
 
-        $data = [
-            'title' => 'Dashboard',
-            'today' => $today
-        ];
-
+        $builder = $this->temuanModel;
+        
         if ($role_id == 2) {
-            $data['total']       = $this->temuanModel->where('pic_id', $user_id)->countAllResults();
-            $data['open']        = $this->temuanModel->where(['pic_id' => $user_id, 'status_progress' => 'Open'])->countAllResults();
-            $data['on_progress'] = $this->temuanModel->where(['pic_id' => $user_id, 'status_progress' => 'On Progress'])->countAllResults();
-            $data['closed']      = $this->temuanModel->where(['pic_id' => $user_id, 'status_progress' => 'Closed'])->countAllResults();
-
-            $data['early_warning'] = $this->temuanModel
-                ->where('pic_id', $user_id)
-                ->where('status_progress !=', 'Closed')
-                ->orderBy('deadline', 'ASC')
-                ->limit(5)
-                ->find();
-        } else {
-            $data['total']       = $this->temuanModel->countAllResults();
-            $data['open']        = $this->temuanModel->where('status_progress', 'Open')->countAllResults();
-            $data['on_progress'] = $this->temuanModel->where('status_progress', 'On Progress')->countAllResults();
-            $data['closed']      = $this->temuanModel->where('status_progress', 'Closed')->countAllResults();
-
-            $data['overdue_count'] = $this->temuanModel
-                ->where('deadline <', $today)
-                ->where('status_progress !=', 'Closed')
-                ->countAllResults();
-
-            $data['pending_verif'] = $this->tindakLanjutModel
-                ->where('status_verifikasi', 'pending')
-                ->countAllResults();
-
-            $thirtyDaysLater = date('Y-m-d', strtotime('+30 days'));
-            $data['early_warning'] = $this->temuanModel
-                ->where('status_progress !=', 'Closed')
-                ->where('deadline <=', $thirtyDaysLater)
-                ->orderBy('deadline', 'ASC')
-                ->limit(10)
-                ->find();
+            $builder = $builder->where('pic_id', $user_id);
         }
+
+        $total = (clone $builder)->countAllResults();
+
+        $open = (clone $builder)->where('status_progress', 'Open')->countAllResults();
+
+        $proses = (clone $builder)
+            ->groupStart()
+                ->where('status_progress', 'On Progress')
+                ->orLike('status_progress', 'Waiting', 'after')
+            ->groupEnd()
+            ->countAllResults();
+
+        $closed = (clone $builder)->where('status_progress', 'Closed')->countAllResults();
+
+        $on_time_count = (clone $builder)
+            ->where('status_progress', 'Closed')
+            ->where('updated_at <=', 'deadline', false)
+            ->countAllResults();
+            
+        $overdue_count = (clone $builder)
+            ->where('status_progress', 'Closed')
+            ->where('updated_at >', 'deadline', false)
+            ->countAllResults();
+
+        $early_warning = (clone $builder)
+            ->where('status_progress !=', 'Closed')
+            ->orderBy('deadline', 'ASC')
+            ->limit(5)
+            ->findAll();
+
+        $overdue_alert_count = (clone $builder)
+            ->where('status_progress !=', 'Closed')
+            ->where('deadline <', $today)
+            ->countAllResults();
+
+        $pending_verif = $this->tindakLanjutModel
+            ->where('status_verifikasi', 'pending')
+            ->countAllResults();
+
+        $data = [
+            'title'         => 'Dashboard Analytics',
+            'today'         => $today,
+            'total'         => $total,
+            'open'          => $open,
+            'proses'        => $proses,
+            'closed'        => $closed,
+            'chart_data'    => [
+                'on_time' => $on_time_count,
+                'overdue' => $overdue_count
+            ],
+            'early_warning' => $early_warning,
+            'overdue_count' => $overdue_alert_count,
+            'pending_verif' => $pending_verif
+        ];
 
         return view('dashboard/index', $data);
     }
