@@ -49,7 +49,7 @@
 
         <?php if (in_array($role_id, [1, 3, 4, 5])) : ?>
             <li class="nav-item">
-              <a class="nav-link nav-item-modern" href="/laporan">
+              <a class="nav-link nav-item-modern <?= url_is('/laporan') ? "active" : "" ?>" href="/laporan">
                 <i class="bi bi-file-earmark-pdf"></i>
                 <span>Laporan</span>
               </a>

@@ -13,7 +13,7 @@
                     <thead class="table-dark">
                         <tr>
                             <th>No</th>
-                            <th>Nama PIC</th>
+                            <th>Nama Auditee</th>
                             <th>Departemen</th>
                             <th class="text-center">Aksi</th>
                         </tr>
