@@ -16,22 +16,22 @@
 
 <div class="card card-modern border-0 shadow-sm overflow-hidden">
     <div class="card-header bg-primary py-3">
-        <h6 class="card-title text-white mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i> Formulir Auditor</h6>
+        <h6 class="card-title text-white mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i> Formulir Temuan Audit</h6>
     </div>
     <div class="card-body p-4 p-lg-5">
         <form action="/temuan/store" method="post" id="formTemuan">
             <?= csrf_field(); ?>
 
             <div class="row g-4">
-                <!-- Klausul & PIC -->
+                <!-- Klausul & Auditee -->
                 <div class="col-md-6 mb-3">
                     <label for="klausul" class="form-label fw-semibold">Grup / Klausul Audit</label>
                     <input type="text" class="form-control form-control-lg border-2" id="klausul" name="klausul" placeholder="Contoh: ISO 9001:2015" required autofocus>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="pic_id" class="form-label fw-semibold">Tugaskan ke PIC (Auditee)</label>
+                    <label for="pic_id" class="form-label fw-semibold">Tugaskan ke Auditee</label>
                     <select class="form-select form-select-lg border-2 shadow-none" id="pic_id" name="pic_id" required>
-                        <option value="" selected disabled>-- Pilih PIC --</option>
+                        <option value="" selected disabled>-- Pilih Auditee --</option>
                         <?php foreach($users as $user): ?>
                             <option value="<?= $user['id']; ?>"><?= $user['name']; ?> (<?= $user['department']; ?>)</option>
                         <?php endforeach; ?>
@@ -40,7 +40,7 @@
 
                 <!-- Judul Temuan -->
                 <div class="col-12 mb-3">
-                    <label for="judul_temuan" class="form-label fw-semibold">Judul Singkat Temuan</label>
+                    <label for="judul_temuan" class="form-label fw-semibold">Judul Temuan</label>
                     <input type="text" class="form-control form-control-lg border-2" id="judul_temuan" name="judul_temuan" placeholder="Tentukan pokok permasalahan" required>
                 </div>
 
@@ -71,8 +71,12 @@
                             <label class="form-check-label" for="kategori1">Temuan Baru</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="kategori_status" id="kategori2" value="Berulang" required>
-                            <label class="form-check-label" for="kategori2">Berulang</label>
+                            <input class="form-check-input" type="radio" name="kategori_status" id="kategori2" value="Temuan Berulang 1" required>
+                            <label class="form-check-label" for="kategori2">Temuan Berulang 1</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="kategori_status" id="kategori2" value="Temuan Berulang 2" required>
+                            <label class="form-check-label" for="kategori2">Temuan Berulang 2</label>
                         </div>
                     </div>
                 </div>

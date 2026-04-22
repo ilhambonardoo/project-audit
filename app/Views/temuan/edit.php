@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold small text-muted">PIC Audit (Auditee)</label>
+                    <label class="form-label fw-bold small text-muted">Auditee</label>
                     <select class="form-select" name="pic_id" required>
                         <?php foreach ($users as $user) : ?>
                             <option value="<?= $user['id']; ?>" <?= ($temuan['pic_id'] == $user['id']) ? 'selected' : ''; ?>>

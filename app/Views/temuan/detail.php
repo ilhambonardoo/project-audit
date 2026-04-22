@@ -38,9 +38,15 @@
                             if ($temuan['level_temuan'] == 'Tinggi') $badge_class = 'bg-danger';
                             elseif ($temuan['level_temuan'] == 'Menengah') $badge_class = 'bg-warning text-dark';
                             elseif ($temuan['level_temuan'] == 'Rendah') $badge_class = 'bg-success';
+
+                            $kat_badge = 'bg-info text-dark';
+                            if (strpos($temuan['kategori_status'], 'Berulang') !== false) $kat_badge = 'bg-warning text-dark';
                         ?>
-                        <strong><i class="bi bi-shield-exclamation text-primary"></i> Level Risiko</strong>
-                        <div class="mt-1"><span class="badge <?= $badge_class; ?> rounded-pill px-3 fs-6"><?= $temuan['level_temuan']; ?></span></div>
+                        <strong><i class="bi bi-shield-exclamation text-primary"></i> Level Risiko & Kategori</strong>
+                        <div class="mt-1">
+                            <span class="badge <?= $badge_class; ?> rounded-pill px-3 fs-6"><?= $temuan['level_temuan']; ?></span>
+                            <span class="badge <?= $kat_badge; ?> rounded-pill px-3 fs-6 ms-1"><?= $temuan['kategori_status']; ?></span>
+                        </div>
                     </div>
                 </div>
 
@@ -48,7 +54,7 @@
                     <h5 class="fw-bold text-primary mb-3"># <?= $temuan['judul_temuan']; ?></h5>
                     <div class="row g-2">
                         <div class="col-auto"><span class="badge border bg-light text-muted fw-normal p-2"><i class="bi bi-pencil-square"></i> Auditor: <strong><?= $auditor_name; ?></strong></span></div>
-                        <div class="col-auto"><span class="badge border bg-light text-muted fw-normal p-2"><i class="bi bi-person"></i> PIC Audit: <strong><?= $pic_name; ?></strong></span></div>
+                        <div class="col-auto"><span class="badge border bg-light text-muted fw-normal p-2"><i class="bi bi-person"></i> Auditee: <strong><?= $pic_name; ?></strong></span></div>
                     </div>
                 </div>
 
@@ -91,7 +97,7 @@
                         <div class="mb-3">
                             <i class="bi bi-hourglass-split display-1 text-muted opacity-25"></i>
                         </div>
-                        <h6 class="fw-bold">Menunggu Tanggapan PIC</h6>
+                        <h6 class="fw-bold">Menunggu Tanggapan Auditee</h6>
                         <p class="text-muted small">Auditee belum memberikan respon tindak lanjut untuk temuan ini.</p>
                         <?php if (session()->get('role_id') == 2 && session()->get('id') == $temuan['pic_id']) :?>
                             <?php 
@@ -122,7 +128,7 @@
                     </div>
                 <?php else : ?>
                     <div class="mb-4">
-                        <label class="fw-bold text-uppercase small text-muted mb-2">Tanggapan PIC</label>
+                        <label class="fw-bold text-uppercase small text-muted mb-2">Tanggapan Auditee</label>
                         <div class="p-3 bg-light rounded-3 shadow-sm mb-3">
                              <p class="mb-0"><?= nl2br($tindak_lanjut['tanggapan_auditee']); ?></p>
                              <small class="text-muted mt-2 d-block">Dikirim pada: <?= date('d M Y H:i', strtotime($tindak_lanjut['created_at'])); ?></small>
@@ -132,7 +138,7 @@
                         <div class="list-group mb-3">
                             <?php if (count($bukti_pendukung) > 0) : ?>
                             <?php foreach ($bukti_pendukung as $bukti) : ?>
-                                <a href="<?= base_url($bukti['file_path']); ?>" download="<?= $bukti['file_name']; ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border">
+                                <a href="<?= base_url('tindak-lanjut/download/' . $bukti['id']); ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border">
                                     <div class="text-truncate">
                                         <i class="bi bi-file-earmark-text text-primary me-2"></i>
                                         <span class="small"><?= $bukti['file_name']; ?></span>

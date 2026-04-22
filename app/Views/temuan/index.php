@@ -28,7 +28,7 @@
                         <th class="px-4 py-3 text-center" style="width: 50px;">No</th>
                         <th>Klausul</th>
                         <th>Judul Temuan</th>
-                        <th>PIC</th>
+                        <th>Auditee</th>
                         <th class="text-center">Risiko</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Deadline</th>
@@ -51,9 +51,20 @@
                             ?>
                             <tr>
                                 <td class="px-4 text-center"><?= $no++; ?></td>
-                                <td class="fw-semibold text-primary"><?= $row['klausul']; ?></td>
+                                <td class="fw-semibold text-primary">
+                                    <?= $row['klausul']; ?>
+                                    <div class="mt-1">
+                                        <small class="badge bg-light text-muted fw-normal border"><?= $row['kategori_status']; ?></small>
+                                    </div>
+                                </td>
                                 <td><?= $row['judul_temuan']; ?></td>
-                                <td><span class="badge border bg-light text-dark fw-normal"><i class="bi bi-person"></i> ID: <?= $row['pic_id']; ?></span></td>
+                                <td>
+                                    <?php 
+                                        $userModel = new \App\Models\UserModel();
+                                        $pic = $userModel->find($row['pic_id']);
+                                        echo $pic ? esc($pic['name']) : 'Unknown';
+                                    ?>
+                                </td>
                                 <td class="text-center">
                                     <span class="badge <?= $risk_badge; ?> rounded-pill px-3">
                                         <?= $row['level_temuan']; ?>
