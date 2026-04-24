@@ -35,6 +35,10 @@ class TindakLanjut extends BaseController
             return redirect()->to('/dashboard')->with('error', 'Data tidak ditemukan atau Anda tidak memiliki akses ke temuan ini.');
         }
 
+        if ($temuan['status_progress'] === 'Waiting Lead Auditor Approval') {
+            return redirect()->to('/temuan/show/' . $temuan_id)->with('error', 'Temuan ini belum disetujui (ACC) oleh Lead Auditor.');
+        }
+
         $data = [
             'title'  => 'Form Tindak Lanjut Temuan',
             'temuan' => $temuan

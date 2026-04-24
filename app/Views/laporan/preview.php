@@ -79,25 +79,43 @@
     </div>
 </div>
 
-<div class="container-fluid px-5 signature-section-web mt-4">
+<div class="container-fluid px-5 signature-section-web mt-4 mb-5">
     <div class="row text-center">
         <div class="col-4">
-            <p class="fw-bold">Auditor</p>
-            <div style="height: 80px;"></div>
-            <p class="fw-bold">(....................)</p>
-            <p class="small"><?= esc((string)($pic['auditor_name'] ?? 'Auditor Nama')) ?></p>
+            <p class="fw-bold mb-1">Auditor</p>
+            <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
+                <?php if (!empty($pic['auditor_signature_final'])) : ?>
+                    <img src="<?= $pic['auditor_signature_final'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php else: ?>
+                   <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
+                <?php endif; ?>
+            </div>
+            <p class="fw-bold mb-0">( <?= esc((string)($pic['auditor_name'] ?? '................')) ?> )</p>
         </div>
         <div class="col-4">
-            <p class="fw-bold">Lead Auditor</p>
-            <div style="height: 80px;"></div>
-            <p class="fw-bold">(....................)</p>
-            <p class="small">Senior Auditor</p>
+            <p class="fw-bold mb-1">Lead Auditor</p>
+            <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
+                <?php if (!empty($pic['lead_auditor_signature'])) : ?>
+                    <img src="<?= $pic['lead_auditor_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php else: ?>
+                   <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
+                <?php endif; ?>
+            </div>
+            <p class="fw-bold mb-0">( <?= esc((string)($pic['lead_auditor_name'] ?? '................')) ?> )</p>
         </div>
         <div class="col-4">
-            <p class="fw-bold">Auditee</p>
-            <div style="height: 80px;"></div>
-            <p class="fw-bold">( <?= esc((string)$pic['pic_name']) ?> )</p>
-            <p class="small">Kepala Departemen / PIC</p>
+            <p class="fw-bold mb-1">Auditee / PIC</p>
+            <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
+                <?php if (!empty($pic['pic_signature'])) : ?>
+                    <img src="<?= $pic['pic_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php else: ?>
+                   <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
+                <?php endif; ?>
+            </div>
+            <p class="fw-bold mb-0">( <?= esc((string)$pic['pic_name']) ?> )</p>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 

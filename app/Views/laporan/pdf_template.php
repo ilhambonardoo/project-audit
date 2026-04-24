@@ -126,25 +126,38 @@
         </tbody>
     </table>
 
+    <style>
+        .signature-space { height: 80px; text-align: center; vertical-align: middle; }
+        .signature-img { max-height: 70px; max-width: 150px; }
+    </style>
     <div class="signature-section">
         <div class="signature-wrapper">
             <div class="signature-box">
                 <p class="fw-bold">Auditor</p>
-                <div class="signature-space"></div>
-                <p class="fw-bold">(....................)</p>
-                <p><small><?= esc((string)($pic['auditor_name'] ?? 'Auditor Nama')) ?></small></p>
+                <div class="signature-space">
+                    <?php if (!empty($pic['auditor_signature_final'])) : ?>
+                        <img src="<?= $pic['auditor_signature_final'] ?>" class="signature-img">
+                    <?php endif; ?>
+                </div>
+                <p class="fw-bold">( <?= esc((string)($pic['auditor_name'] ?? '................')) ?> )</p>
             </div>
             <div class="signature-box">
                 <p class="fw-bold">Lead Auditor</p>
-                <div class="signature-space"></div>
-                <p class="fw-bold">(....................)</p>
-                <p><small>Senior Auditor</small></p>
+                <div class="signature-space">
+                    <?php if (!empty($pic['lead_auditor_signature'])) : ?>
+                        <img src="<?= $pic['lead_auditor_signature'] ?>" class="signature-img">
+                    <?php endif; ?>
+                </div>
+                <p class="fw-bold">( <?= esc((string)($pic['lead_auditor_name'] ?? '................')) ?> )</p>
             </div>
             <div class="signature-box">
-                <p class="fw-bold">Auditee</p>
-                <div class="signature-space"></div>
+                <p class="fw-bold">Auditee / PIC</p>
+                <div class="signature-space">
+                    <?php if (!empty($pic['pic_signature'])) : ?>
+                        <img src="<?= $pic['pic_signature'] ?>" class="signature-img">
+                    <?php endif; ?>
+                </div>
                 <p class="fw-bold">( <?= esc((string)$pic['pic_name']) ?> )</p>
-                <p><small>Kepala Departemen / PIC</small></p>
             </div>
             <div class="clear"></div>
         </div>
