@@ -71,9 +71,15 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-outline-primary border border-primary text-primary px-3 rounded-pill">
-                                        <?= $row['status_progress']; ?>
-                                    </span>
+                                    <?php if ($row['status_progress'] == 'Draft') : ?>
+                                        <span class="badge bg-secondary px-3 rounded-pill">
+                                            Revision Required
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="badge bg-outline-primary border border-primary text-primary px-3 rounded-pill">
+                                            <?= $row['status_progress']; ?>
+                                        </span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge <?= ($diff < 0) ? 'bg-danger' : 'bg-light text-dark'; ?> border">

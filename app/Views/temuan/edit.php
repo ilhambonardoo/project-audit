@@ -13,6 +13,20 @@
 
 <div class="card card-modern border-0 shadow-sm">
     <div class="card-body p-4 p-lg-5">
+        <?php if ($temuan['status_progress'] == 'Draft' && !empty($temuan['catatan_revisi'])): ?>
+            <div class="alert alert-warning border-0 shadow-sm mb-4">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Catatan Revisi Lead Auditor</h6>
+                        <p class="mb-0 small"><strong><?= $temuan['catatan_revisi']; ?></strong></p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <form action="/temuan/update/<?= $temuan['id']; ?>" method="post">
             <?= csrf_field(); ?>
 
