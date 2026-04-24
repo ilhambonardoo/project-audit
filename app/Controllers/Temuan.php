@@ -73,8 +73,9 @@ class Temuan extends BaseController
             'rekomendasi'     => $this->request->getPost('rekomendasi'),
             'kategori_status' => $this->request->getPost('kategori_status'),
             'level_temuan'    => $this->request->getPost('level_temuan'),
-            'status_progress' => 'Open',
+            'status_progress' => 'Waiting Lead Auditor Approval',
             'deadline'        => $deadline,
+            'auditor_signature_snapshot' => session()->get('signature'),
         ]);
 
         $auditModel = $this->AuditTrailModel;
@@ -105,13 +106,22 @@ class Temuan extends BaseController
             $bukti_pendukung = $this->buktiModel->where('tindak_lanjut_id', $tindak_lanjut['id'])->findAll();
         }
 
+        // Ambil tanda tangan Lead Auditor dari tabel approvals jika sudah ada
+        $approvalModel = new \App\Models\ApprovalModel();
+        $leadApproval = $approvalModel->where([
+            'temuan_id' => $id,
+            'level_urut' => 6 // Lead Auditor
+        ])->first();
+
         $data = [
             'title'           => 'Detail Temuan: ' . $temuan['judul_temuan'],
             'temuan'          => $temuan,
             'auditor_name'    => $auditor['name'] ?? 'Tidak Diketahui',
             'pic_name'        => $pic['name'] ?? 'Pilih PIC Terlebih Dahulu',
             'tindak_lanjut'   => $tindak_lanjut,
-            'bukti_pendukung' => $bukti_pendukung
+            'bukti_pendukung' => $bukti_pendukung,
+            'lead_signature'  => $leadApproval['signature_snapshot'] ?? null,
+            'auditor_signature' => $temuan['auditor_signature_snapshot'] ?? ($auditor['signature'] ?? null)
         ];
 
         return view('temuan/detail', $data);
@@ -192,7 +202,12 @@ class Temuan extends BaseController
 
     public function update($id)
     {
-        $this->temuanModel->update($id, [
+        $temuan = $this->temuanModel->find($id);
+        if (!$temuan) {
+            return redirect()->to('/temuan')->with('error', 'Data tidak ditemukan.');
+        }
+
+        $updateData = [
             'klausul'       => $this->request->getPost('klausul'),
             'judul_temuan'  => $this->request->getPost('judul_temuan'),
             'uraian_temuan' => $this->request->getPost('uraian_temuan'),
@@ -201,9 +216,27 @@ class Temuan extends BaseController
             'level_temuan'  => $this->request->getPost('level_temuan'),
             'pic_id'        => $this->request->getPost('pic_id'),
             'deadline'      => $this->request->getPost('deadline'),
+        ];
+
+        // Jika status saat ini adalah Draft (hasil reject Lead Auditor), 
+        // maka setelah diupdate, status kembali ke Waiting Lead Auditor Approval
+        // dan bubuhkan tanda tangan baru
+        if ($temuan['status_progress'] === 'Draft') {
+            $updateData['status_progress'] = 'Waiting Lead Auditor Approval';
+            $updateData['auditor_signature_snapshot'] = session()->get('signature');
+        }
+
+        $this->temuanModel->update($id, $updateData);
+
+        // Log Audit Trail
+        $this->AuditTrailModel->save([
+            'user_id'    => session()->get('id'), 
+            'aktivitas'  => 'Update Temuan',
+            'keterangan' => 'Auditor memperbarui dan mengirim ulang temuan ID: ' . $id,
+            'created_at' => date('Y-m-d H:i:s')
         ]);
 
-        return redirect()->to('/temuan')->with('success', 'Data temuan berhasil diperbarui!');
+        return redirect()->to('/temuan')->with('success', 'Data temuan berhasil diperbarui dan dikirim ulang untuk approval!');
     }
 
     public function delete($id)
