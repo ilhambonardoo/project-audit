@@ -16,6 +16,8 @@ $routes->group('', function($routes) {
 
 $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('dashboard', 'Dashboard::index');
+    $routes->get('profile', 'Auth::profile');
+    $routes->post('profile/update', 'Auth::updateProfile');
 
     $routes->group('temuan', function($routes) {
         $routes->get('/', 'Temuan::index');

@@ -28,7 +28,10 @@ class Approval extends BaseController
         $statusFilter = '';
 
         switch ($roleId) {
-            case 3:
+            case 6: // Lead Auditor
+                $statusFilter = 'Waiting Lead Auditor Approval';
+                break;
+            case 3: // Kadep
                 $statusFilter = 'Waiting Kadep Approval';
                 break;
             case 4:
@@ -63,79 +66,90 @@ class Approval extends BaseController
             return redirect()->back()->with('error', 'Data temuan tidak ditemukan.');
         }
 
-        $allowedStatus = [
-            3 => 'Waiting Kadep Approval',
-            4 => 'Waiting Manager Approval',
-            5 => 'Waiting Direktur Approval'
-        ];
-
-        if (!isset($allowedStatus[$roleId]) || $temuan['status_progress'] !== $allowedStatus[$roleId]) {
-            return redirect()->back()->with('error', 'Data ini sudah diproses atau bukan wewenang Anda saat ini.');
-        }
-
         $nextStatus = '';
         $actionLog  = '';
 
         $db = \Config\Database::connect();
-        $db->transStart();
+        
+        try {
+            if ($decision === 'Reject') {
+                if ($roleId == 6) {
+                    $nextStatus = 'Draft';
+                    $actionLog = "Rejected by Lead Auditor - Auditor must revise. Reason: " . $notes;
+                } else if ($roleId == 3) {
+                    $nextStatus = 'Open';
+                    $actionLog  = "Rejected by Kadep - Back to Open. Reason: " . $notes;
+                } else {
+                    $nextStatus = 'On Progress';
+                    $actionLog  = "Rejected by Role " . $roleId . " - Reason: " . $notes;
+                }
 
-        if ($decision === 'Reject') {
-            $nextStatus = 'On Progress';
-            $actionLog  = "Rejected by Role " . $roleId . " - Reason: " . $notes;
+                $updateData = [
+                    'status_progress' => $nextStatus,
+                    'catatan_revisi'  => $notes
+                ];
 
-            $tindakLanjut = $this->tindakLanjutModel->where('temuan_id', $temuanId)->first();
-            
-            if($tindakLanjut){
-                $this->tindakLanjutModel->update($tindakLanjut['id'], [
-                    'status_verifikasi' => 'revision_required', 
-                    'catatan_auditor'   => 'Ditolak oleh Manajemen: ' . $notes
-                ]);
+                if ($roleId == 6) {
+                    $updateData['auditor_signature_snapshot'] = null;
+                }
+
+                $db->table('temuan')->where('id', $temuanId)->update($updateData);
+
+                if ($nextStatus !== 'Draft') {
+                    $tindakLanjut = $this->tindakLanjutModel->where('temuan_id', $temuanId)->first();
+                    if($tindakLanjut) {
+                        $db->table('tindak_lanjut')->where('id', $tindakLanjut['id'])->update([
+                            'status_verifikasi' => 'revision_required', 
+                            'catatan_auditor'   => 'Ditolak: ' . $notes
+                        ]);
+                    }
+                }
+            } else if ($decision === 'Approve') {
+                switch ($roleId) {
+                    case 6:
+                        $nextStatus = 'Open';
+                        $actionLog  = "Approved by Lead Auditor - Ready for Auditee";
+                        $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus, 'catatan_revisi' => null]);
+                        break;
+                    case 3:
+                        $nextStatus = 'Waiting Manager Approval';
+                        $actionLog  = "Approved by Kepala Departemen";
+                        $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
+                        break;
+                    case 4:
+                        $nextStatus = 'Waiting Direktur Approval';
+                        $actionLog  = "Approved by Manager";
+                        $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
+                        break;
+                    case 5:
+                        $nextStatus = 'Closed';
+                        $actionLog  = "Approved by Direktur (Closed)";
+                        $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
+                        break;
+                }
             }
-        } else {
-            switch ($roleId) {
-                case 3:
-                    $nextStatus = 'Waiting Manager Approval';
-                    $actionLog  = "Approved by Kepala Departemen";
-                    break;
-                case 4:
-                    $nextStatus = 'Waiting Direktur Approval';
-                    $actionLog  = "Approved by Manager";
-                    break;
-                case 5:
-                    $nextStatus = 'Closed';
-                    $actionLog  = "Approved by Direktur (Closed)";
-                    break;
-                default:
-                    $db->transRollback();
-                    return redirect()->back()->with('error', 'Otoritas tidak valid.');
-            }
+
+            $db->table('approvals')->insert([
+                'temuan_id'   => $temuanId,
+                'approver_id' => $userId,
+                'level_urut'  => $roleId,
+                'status'      => strtolower($decision),
+                'signature_snapshot' => ($decision === 'Reject') ? null : session()->get('signature'),
+                'created_at'  => date('Y-m-d H:i:s')
+            ]);
+
+            // MENYESUAIKAN KOLOM KE 'action' SESUAI AuditTrailModel
+            $db->table('audit_trails')->insert([
+                'user_id'    => $userId,
+                'action'     => $actionLog . " [Temuan ID: $temuanId]",
+                'ip_address' => $this->request->getIPAddress(),
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+            return redirect()->to('/approval')->with('message', 'Persetujuan berhasil diproses. Status Baru: ' . $nextStatus);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memproses (Database Error): ' . $e->getMessage());
         }
-
-        $this->temuanModel->update($temuanId, [
-            'status_progress' => $nextStatus
-        ]);
-
-        $this->approvalModel->save([
-            'temuan_id'   => $temuanId,
-            'approver_id' => $userId,
-            'level_urut'  => $roleId,
-            'status'      => strtolower($decision),
-            'created_at'  => date('Y-m-d H:i:s')
-        ]);
-
-        $this->auditTrailModel->save([
-            'user_id'    => $userId,
-            'action'     => $actionLog . " [Temuan ID: $temuanId]",
-            'ip_address' => $this->request->getIPAddress(),
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-
-        $db->transComplete();
-
-        if ($db->transStatus() === false) {
-            return redirect()->back()->with('error', 'Gagal memproses persetujuan. Terjadi kesalahan pada database.');
-        }
-
-        return redirect()->to('/approval')->with('message', 'Persetujuan berhasil diproses. Status: ' . $nextStatus);
     }
 }

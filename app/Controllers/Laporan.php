@@ -150,9 +150,19 @@ class Laporan extends BaseController
     private function getLaporanDataByPic($pic_id)
     {
         return $this->temuanModel
-            ->select('temuan.*, users.name as pic_name, users.department, tindak_lanjut.tanggapan_auditee, auditor.name as auditor_name')
-            ->join('users', 'users.id = temuan.pic_id')
+            ->select('temuan.*, 
+                     pic.name as pic_name, pic.department, 
+                     COALESCE(pic_approval.signature_snapshot, pic.signature) as pic_signature,
+                     tindak_lanjut.tanggapan_auditee, 
+                     auditor.name as auditor_name, 
+                     COALESCE(temuan.auditor_signature_snapshot, auditor.signature) as auditor_signature_final,
+                     COALESCE(lead_approval.signature_snapshot, lead_user.signature) as lead_auditor_signature,
+                     lead_user.name as lead_auditor_name')
+            ->join('users as pic', 'pic.id = temuan.pic_id')
             ->join('users as auditor', 'auditor.id = temuan.auditor_id', 'left')
+            ->join('approvals as lead_approval', "lead_approval.temuan_id = temuan.id AND lead_approval.level_urut = 6 AND lead_approval.status = 'approved'", 'left')
+            ->join('users as lead_user', 'lead_user.role_id = 6', 'left') 
+            ->join('approvals as pic_approval', "pic_approval.temuan_id = temuan.id AND pic_approval.level_urut = 2", 'left')
             ->join('tindak_lanjut', 'tindak_lanjut.temuan_id = temuan.id', 'left')
             ->where('temuan.pic_id', $pic_id)
             ->findAll();
