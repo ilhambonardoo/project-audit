@@ -39,6 +39,7 @@ class Auth extends BaseController
                     'email'      => $user['email'],
                     'role_id'    => $user['role_id'],
                     'department' => $user['department'],
+                    'signature'  => $user['signature'],
                     'isLoggedIn' => TRUE
                 ];
                 $session->set($ses_data);
@@ -57,5 +58,31 @@ class Auth extends BaseController
     {
         session()->destroy();
         return redirect()->to('/login');
+    }
+
+    public function profile()
+    {
+        $user = $this->user_model->find(session()->get('id'));
+        $data = [
+            'title' => 'Profil Saya',
+            'user'  => $user
+        ];
+        return view('auth/profile', $data);
+    }
+
+    public function updateProfile()
+    {
+        $userId = session()->get('id');
+        $signature = $this->request->getPost('signature');
+
+        if ($signature) {
+            $this->user_model->update($userId, [
+                'signature' => $signature
+            ]);
+            session()->set('signature', $signature);
+            return redirect()->to('/profile')->with('message', 'Tanda tangan berhasil diperbarui.');
+        }
+
+        return redirect()->to('/profile')->with('error', 'Gagal memperbarui tanda tangan.');
     }
 }

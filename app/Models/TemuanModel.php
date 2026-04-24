@@ -13,7 +13,8 @@ class TemuanModel extends Model
     protected $allowedFields    = [
         'auditor_id', 'pic_id', 'klausul', 'judul_temuan', 
         'uraian_temuan', 'kriteria', 'rekomendasi', 
-        'kategori_status', 'level_temuan', 'status_progress', 'deadline'
+        'kategori_status', 'level_temuan', 'status_progress', 'deadline',
+        'auditor_signature_snapshot', 'catatan_revisi'
     ];
 
     protected $useTimestamps = true;
