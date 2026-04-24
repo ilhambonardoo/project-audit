@@ -38,7 +38,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if (in_array($role_id, [3, 4, 5])) : ?>
+        <?php if (in_array($role_id, [3, 4, 5, 6])) : ?>
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= url_is('/approval') ? "active" : "" ?>" href="/approval">
                 <i class="bi bi-check-circle"></i>
@@ -47,7 +47,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if (in_array($role_id, [1, 3, 4, 5])) : ?>
+        <?php if (in_array($role_id, [1, 3, 4, 5, 6])) : ?>
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= url_is('/laporan') ? "active" : "" ?>" href="/laporan">
                 <i class="bi bi-file-earmark-pdf"></i>
@@ -68,7 +68,7 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end navbar-dropdown-modern">
             <li>
-              <a class="dropdown-item" href="#">
+              <a class="dropdown-item" href="/profile">
                 <i class="bi bi-person"></i> Profil Saya
               </a>
             </li>
