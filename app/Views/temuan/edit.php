@@ -79,6 +79,24 @@
                     <label class="form-label fw-bold small text-muted">Batas Waktu (Deadline)</label>
                     <input type="date" class="form-control" name="deadline" value="<?= esc($temuan['deadline']); ?>" required>
                 </div>
+
+                <div class="col-md-12 mt-3">
+                    <label class="form-label fw-bold small text-muted">Kategori Temuan</label>
+                    <div class="d-flex gap-4 mt-1">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="kategori_status" id="ekategori1" value="Temuan Baru" <?= ($temuan['kategori_status'] == 'Temuan Baru') ? 'checked' : ''; ?> required>
+                            <label class="form-check-label" for="ekategori1">Temuan Baru</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="kategori_status" id="ekategori2" value="Temuan Berulang 1" <?= ($temuan['kategori_status'] == 'Temuan Berulang 1') ? 'checked' : ''; ?> required>
+                            <label class="form-check-label" for="ekategori2">Temuan Berulang 1</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="kategori_status" id="ekategori3" value="Temuan Berulang 2" <?= ($temuan['kategori_status'] == 'Temuan Berulang 2') ? 'checked' : ''; ?> required>
+                            <label class="form-check-label" for="ekategori3">Temuan Berulang 2</label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <hr class="my-4">
