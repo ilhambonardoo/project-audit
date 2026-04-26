@@ -82,37 +82,37 @@
 <div class="container-fluid px-5 signature-section-web mt-4 mb-5">
     <div class="row text-center">
         <div class="col-4">
-            <p class="fw-bold mb-1">Auditor</p>
+            <p class="fw-bold mb-1">Mengetahui:</p>
             <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
-                <?php if (!empty($pic['auditor_signature_final'])) : ?>
-                    <img src="<?= $pic['auditor_signature_final'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php if (!empty($pic['dept_head_signature'])) : ?>
+                    <img src="<?= $pic['dept_head_signature'] ?>" style="max-height: 80px; max-width: 150px;">
                 <?php else: ?>
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">( <?= esc((string)($pic['auditor_name'] ?? '................')) ?> )</p>
+            <p class="fw-bold mb-0">(Ass. Head Corp Finance Controller)</p>
         </div>
         <div class="col-4">
-            <p class="fw-bold mb-1">Lead Auditor</p>
+            <p class="fw-bold mb-1">Diperiksa Oleh:</p>
             <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
-                <?php if (!empty($pic['lead_auditor_signature'])) : ?>
-                    <img src="<?= $pic['lead_auditor_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php if (!empty($pic['director_signature'])) : ?>
+                    <img src="<?= $pic['director_signature'] ?>" style="max-height: 80px; max-width: 150px;">
                 <?php else: ?>
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">( <?= esc((string)($pic['lead_auditor_name'] ?? '................')) ?> )</p>
+            <p class="fw-bold mb-0">(Chief Financial Officer)</p>
         </div>
         <div class="col-4">
-            <p class="fw-bold mb-1">Auditee / PIC</p>
+            <p class="fw-bold mb-1">Disetujui Oleh:</p>
             <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
-                <?php if (!empty($pic['pic_signature'])) : ?>
-                    <img src="<?= $pic['pic_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php if (!empty($pic['plant_manager_signature'])) : ?>
+                    <img src="<?= $pic['plant_manager_signature'] ?>" style="max-height: 80px; max-width: 150px;">
                 <?php else: ?>
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">( <?= esc((string)$pic['pic_name']) ?> )</p>
+            <p class="fw-bold mb-0">(Plant Manager)</p>
         </div>
     </div>
 </div>

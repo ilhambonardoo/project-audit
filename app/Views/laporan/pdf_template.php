@@ -133,31 +133,31 @@
     <div class="signature-section">
         <div class="signature-wrapper">
             <div class="signature-box">
-                <p class="fw-bold">Auditor</p>
+                <p class="fw-bold">Mengetahui:</p>
                 <div class="signature-space">
-                    <?php if (!empty($pic['auditor_signature_final'])) : ?>
-                        <img src="<?= $pic['auditor_signature_final'] ?>" class="signature-img">
+                    <?php if (!empty($pic['dept_head_signature'])) : ?>
+                        <img src="<?= $pic['dept_head_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">( <?= esc((string)($pic['auditor_name'] ?? '................')) ?> )</p>
+                <p class="fw-bold">(Ass. Head Corp Finance Controller)</p>
             </div>
             <div class="signature-box">
-                <p class="fw-bold">Lead Auditor</p>
+                <p class="fw-bold">Diperiksa Oleh:</p>
                 <div class="signature-space">
-                    <?php if (!empty($pic['lead_auditor_signature'])) : ?>
-                        <img src="<?= $pic['lead_auditor_signature'] ?>" class="signature-img">
+                    <?php if (!empty($pic['director_signature'])) : ?>
+                        <img src="<?= $pic['director_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">( <?= esc((string)($pic['lead_auditor_name'] ?? '................')) ?> )</p>
+                <p class="fw-bold">(Chief Financial Officer)</p>
             </div>
             <div class="signature-box">
-                <p class="fw-bold">Auditee / PIC</p>
+                <p class="fw-bold">Disetujui oleh:</p>
                 <div class="signature-space">
-                    <?php if (!empty($pic['pic_signature'])) : ?>
-                        <img src="<?= $pic['pic_signature'] ?>" class="signature-img">
+                    <?php if (!empty($pic['plant_manager_signature'])) : ?>
+                        <img src="<?= $pic['plant_manager_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">( <?= esc((string)$pic['pic_name']) ?> )</p>
+                <p class="fw-bold">(Plant Manager)</p>
             </div>
             <div class="clear"></div>
         </div>
