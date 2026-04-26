@@ -216,6 +216,7 @@ class Temuan extends BaseController
             'level_temuan'  => $this->request->getPost('level_temuan'),
             'pic_id'        => $this->request->getPost('pic_id'),
             'deadline'      => $this->request->getPost('deadline'),
+            'kategori_status' => $this->request->getPost('kategori_status'),
         ];
 
         // Jika status saat ini adalah Draft (hasil reject Lead Auditor), 
