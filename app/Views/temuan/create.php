@@ -75,8 +75,8 @@
                             <label class="form-check-label" for="kategori2">Temuan Berulang 1</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="kategori_status" id="kategori2" value="Temuan Berulang 2" required>
-                            <label class="form-check-label" for="kategori2">Temuan Berulang 2</label>
+                            <input class="form-check-input" type="radio" name="kategori_status" id="kategori3" value="Temuan Berulang 2" required>
+                            <label class="form-check-label" for="kategori3">Temuan Berulang 2</label>
                         </div>
                     </div>
                 </div>
