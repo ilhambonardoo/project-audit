@@ -34,11 +34,11 @@ class Approval extends BaseController
             case 3: // Kadep
                 $statusFilter = 'Waiting Kadep Approval';
                 break;
-            case 4:
-                $statusFilter = 'Waiting Manager Approval';
-                break;
-            case 5:
+            case 5: // Direktur / CFO
                 $statusFilter = 'Waiting Direktur Approval';
+                break;
+            case 4: // Plant Manager
+                $statusFilter = 'Waiting Manager Approval';
                 break;
             default:
                 return redirect()->back()->with('error', 'Akses Ditolak.');
@@ -112,18 +112,18 @@ class Approval extends BaseController
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus, 'catatan_revisi' => null]);
                         break;
                     case 3:
-                        $nextStatus = 'Waiting Manager Approval';
+                        $nextStatus = 'Waiting Direktur Approval';
                         $actionLog  = "Approved by Kepala Departemen";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
-                    case 4:
-                        $nextStatus = 'Waiting Direktur Approval';
-                        $actionLog  = "Approved by Manager";
+                    case 5:
+                        $nextStatus = 'Waiting Manager Approval';
+                        $actionLog  = "Approved by Direktur / CFO";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
-                    case 5:
+                    case 4:
                         $nextStatus = 'Closed';
-                        $actionLog  = "Approved by Direktur (Closed)";
+                        $actionLog  = "Approved by Plant Manager (Closed)";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                 }
