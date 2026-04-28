@@ -25,6 +25,11 @@
         </nav>
     </div>
     <div class="col-auto">
+        <?php if ($temuan['status_progress'] == 'Draft' && in_array(session()->get('role_id'), [1, 6])) : ?>
+            <a href="/temuan/edit/<?= $temuan['id'] ?>" class="btn btn-warning rounded-pill px-4 me-2">
+                <i class="bi bi-pencil-square"></i> Revisi Sekarang
+            </a>
+        <?php endif; ?>
         <a href="/temuan" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="bi bi-arrow-left"></i> Kembali
         </a>

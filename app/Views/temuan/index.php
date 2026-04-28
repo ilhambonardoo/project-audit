@@ -95,7 +95,11 @@
                                         <?= (session()->get('role_id') == 2) ? 'Tindak Lanjut / Detail' : 'Detail' ?>
                                     </a>
 
-                                    <?php if (session()->get('role_id') == 1) : ?>
+                                    <?php if ($row['status_progress'] == 'Draft' && in_array(session()->get('role_id'), [1, 6])) : ?>
+                                        <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Revisi</a>
+                                    <?php endif; ?>
+
+                                    <?php if (session()->get('role_id') == 1 && $row['status_progress'] != 'Draft') : ?>
                                         <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Edit</a>
                                         <button class="btn btn-sm btn-outline-danger btn-hapus-temuan" 
                                                 data-id="<?= $row['id'] ?>" 
