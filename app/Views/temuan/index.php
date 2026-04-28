@@ -12,11 +12,13 @@
             </ol>
         </nav>
     </div>
+    <?php if (in_array(session()->get('role_id'), [1, 6])) : ?>
     <div class="col-auto">
         <a href="/temuan/create" class="btn btn-primary rounded-pill px-4">
             <i class="bi bi-plus-lg me-2"></i> Tambah Temuan
         </a>
     </div>
+    <?php endif; ?>
 </div>
 
 <div class="card card-modern border-0 shadow-sm">
@@ -59,11 +61,7 @@
                                 </td>
                                 <td><?= $row['judul_temuan']; ?></td>
                                 <td>
-                                    <?php 
-                                        $userModel = new \App\Models\UserModel();
-                                        $pic = $userModel->find($row['pic_id']);
-                                        echo $pic ? esc($pic['name']) : 'Unknown';
-                                    ?>
+                                    <?= isset($row['pic_name']) ? esc($row['pic_name']) : 'Unknown'; ?>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge <?= $risk_badge; ?> rounded-pill px-3">
@@ -94,7 +92,11 @@
 
                                     <?php if (session()->get('role_id') == 1) : ?>
                                         <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Edit</a>
-                                        <a href="/temuan/delete/<?= $row['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin hapus?')">Hapus</a>
+                                        <button class="btn btn-sm btn-outline-danger btn-hapus-temuan" 
+                                                data-id="<?= $row['id'] ?>" 
+                                                data-judul="<?= esc($row['judul_temuan']) ?>">
+                                            Hapus
+                                        </button>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -102,7 +104,7 @@
                     <?php else : ?>
                         <tr>
                             <td colspan="8" class="text-center py-5">
-                                <img src="https://illustrations.popsy.co/blue/searching-for-answers.svg" alt="Empty" style="height: 150px;">
+                                <i class="bi bi-clipboard-x display-1 text-muted opacity-25"></i>
                                 <p class="mt-3 text-muted">Belum ada data temuan audit yang tercatat.</p>
                             </td>
                         </tr>
