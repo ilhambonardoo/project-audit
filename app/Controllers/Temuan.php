@@ -11,11 +11,11 @@ use App\Models\BuktiPendukungModel;
 
 class Temuan extends BaseController
 {
-    protected $temuanModel;
-    protected $userModel;
-    protected $tindakLanjutModel;
-    protected $buktiModel;
-    protected $AuditTrailModel;
+    protected TemuanModel $temuanModel;
+    protected UserModel $userModel;
+    protected TindakLanjutModel $tindakLanjutModel;
+    protected BuktiPendukungModel $buktiModel;
+    protected AuditTrailModel $AuditTrailModel;
 
     public function __construct()
     {
@@ -28,9 +28,23 @@ class Temuan extends BaseController
 
     public function index()
     {
+        $role_id = session()->get('role_id');
+        $department = session()->get('department');
+        $userId = session()->get('id');
+
+        $query = $this->temuanModel->select('temuan.*, users.name as pic_name, users.department as pic_department')
+            ->join('users', 'users.id = temuan.pic_id')
+            ->orderBy('temuan.created_at', 'DESC');
+
+        // Filter based on role
+        if (!in_array($role_id, [1, 6])) {
+            // Non-auditor roles (PIC, Kadep, PM, CFO) only see findings for their department
+            $query->where('users.department', $department);
+        }
+
         $data = [
             'title'  => 'Data Temuan Audit',
-            'temuan' => $this->temuanModel->orderBy('created_at', 'DESC')->findAll()
+            'temuan' => $query->findAll()
         ];
 
         return view('temuan/index', $data);
