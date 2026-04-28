@@ -55,6 +55,15 @@
               </a>
             </li>
         <?php endif; ?>
+
+        <?php if (in_array($role_id, [1, 6])) : // Lead Auditor Only ?>
+            <li class="nav-item">
+              <a class="nav-link nav-item-modern <?= (url_is('user-management*')) ? 'active' : '' ?>" href="/user-management">
+                <i class="bi bi-people"></i>
+                <span>User Management</span>
+              </a>
+            </li>
+        <?php endif; ?>
       </ul>
 
       <ul class="navbar-nav">
