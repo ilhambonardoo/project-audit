@@ -1,3 +1,9 @@
+<?php 
+/** 
+ * @var string $title
+ * @var array<int, array{id: int|string, name: string, email: string, role_name: string, dept_name: string|null, department: string|null}> $users
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>

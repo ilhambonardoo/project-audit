@@ -1,3 +1,8 @@
+<?php 
+/** 
+ * @var array<int, array{id: int|string, name: string, department: string}> $users
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>

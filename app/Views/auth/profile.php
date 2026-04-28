@@ -1,3 +1,9 @@
+
+<?php 
+/** 
+    * @var array{name: string, email: string, department: string, signature: string|null} $user 
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>

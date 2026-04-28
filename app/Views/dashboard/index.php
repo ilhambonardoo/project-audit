@@ -1,3 +1,16 @@
+<?php 
+/** 
+ * @var string $today
+ * @var int $overdue_count
+ * @var int $pending_verif
+ * @var array{on_time: int, overdue: int} $chart_data
+ * @var int $total
+ * @var int $open
+ * @var int $proses
+ * @var int $closed
+ * @var array $early_warning
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
