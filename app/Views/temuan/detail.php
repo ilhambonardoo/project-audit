@@ -1,3 +1,14 @@
+<?php 
+/** 
+ * @var array{status_progress: string, catatan_revisi: string|null, klausul: string, kategori_status: string, judul_temuan: string, uraian_temuan: string, kriteria: string, rekomendasi: string, created_at: string, deadline: string, pic_id: int|string, level_temuan: string} $temuan
+ * @var string $auditor_name
+ * @var string $pic_name
+ * @var string|null $auditor_signature
+ * @var string|null $lead_signature
+ * @var array{id: int|string, status_verifikasi: string, tanggapan_auditee: string, created_at: string, catatan_auditor: string|null}|null $tindak_lanjut
+ * @var array<int, array{id: int|string, file_name: string}> $bukti_pendukung
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>

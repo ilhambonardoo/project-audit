@@ -1,3 +1,8 @@
+<?php 
+/** 
+ * @var array<int, array{id: int|string, klausul: string, judul_temuan: string, pic_name: string|null, level_temuan: string, status_progress: string, deadline: string, kategori_status: string}> $temuan
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>

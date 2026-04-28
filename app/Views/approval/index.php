@@ -1,3 +1,8 @@
+<?php 
+/** 
+ * @var string $title
+ */ 
+?>
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
