@@ -123,9 +123,11 @@ class Temuan extends BaseController
         // Ambil tanda tangan Lead Auditor dari tabel approvals jika sudah ada
         $approvalModel = new \App\Models\ApprovalModel();
         $leadApproval = $approvalModel->where([
-            'temuan_id' => $id,
-            'level_urut' => 6 // Lead Auditor
-        ])->first();
+            'temuan_id'  => $id,
+            'level_urut' => 6, // Lead Auditor
+        ])->where('signature_snapshot IS NOT NULL')
+          ->orderBy('created_at', 'DESC')
+          ->first();
 
         $data = [
             'title'           => 'Detail Temuan: ' . $temuan['judul_temuan'],
