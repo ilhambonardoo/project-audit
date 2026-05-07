@@ -26,11 +26,20 @@ class Laporan extends BaseController
 
     public function index()
     {
-        $data['pic_groups'] = $this->temuanModel
+        $roleId = session()->get('role_id');
+        $userDept = session()->get('department');
+
+        $builder = $this->temuanModel
             ->select('users.name as pic_name, users.department, users.id as pic_id')
             ->join('users', 'users.id = temuan.pic_id')
-            ->groupBy('pic_id')
-            ->findAll();
+            ->groupBy('pic_id');
+
+        // Jika Kadep (Role 3), hanya lihat auditee di departemennya
+        if ($roleId == 3) {
+            $builder->where('users.department', $userDept);
+        }
+
+        $data['pic_groups'] = $builder->findAll();
 
         return view('laporan/index', $data);
     }
@@ -174,32 +183,16 @@ class Laporan extends BaseController
                      tindak_lanjut.tanggapan_auditee, 
                      auditor.name as auditor_name, 
                      COALESCE(temuan.auditor_signature_snapshot, auditor.signature) as auditor_signature_final,
-                     
-                     -- Kepala Departemen (Role 3)
-                     COALESCE(dept_approval.signature_snapshot, dept_user.signature) as dept_head_signature,
-                     dept_user.name as dept_head_name,
-                     
-                     -- Plant Manager (Role 4)
-                     COALESCE(plant_approval.signature_snapshot, plant_user.signature) as plant_manager_signature,
-                     plant_user.name as plant_manager_name,
-                     
-                     -- Direktur (Role 5)
-                     COALESCE(dir_approval.signature_snapshot, dir_user.signature) as director_signature,
-                     dir_user.name as director_name')
+                     dept_sig.signature_snapshot as dept_head_signature,
+                     plant_sig.signature_snapshot as plant_manager_signature,
+                     dir_sig.signature_snapshot as director_signature')
             ->join('users as pic', 'pic.id = temuan.pic_id')
             ->join('users as auditor', 'auditor.id = temuan.auditor_id', 'left')
             
-            // Join for Kepala Departemen (Level/Role 3)
-            ->join('approvals as dept_approval', "dept_approval.temuan_id = temuan.id AND dept_approval.level_urut = 3 AND TRIM(LOWER(dept_approval.status)) = 'approved'", 'left')
-            ->join('users as dept_user', 'dept_user.role_id = 3', 'left')
-            
-            // Join for Plant Manager (Level/Role 4)
-            ->join('approvals as plant_approval', "plant_approval.temuan_id = temuan.id AND plant_approval.level_urut = 4 AND TRIM(LOWER(plant_approval.status)) = 'approved'", 'left')
-            ->join('users as plant_user', 'plant_user.role_id = 4', 'left')
-            
-            // Join for Direktur (Level/Role 5)
-            ->join('approvals as dir_approval', "dir_approval.temuan_id = temuan.id AND dir_approval.level_urut = 5 AND TRIM(LOWER(dir_approval.status)) = 'approved'", 'left')
-            ->join('users as dir_user', 'dir_user.role_id = 5', 'left')
+            // Subquery untuk mengambil tanda tangan terbaru yang tidak null
+            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 3 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as dept_sig', 'dept_sig.temuan_id = temuan.id', 'left')
+            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 4 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as plant_sig', 'plant_sig.temuan_id = temuan.id', 'left')
+            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 5 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as dir_sig', 'dir_sig.temuan_id = temuan.id', 'left')
 
             ->join('approvals as pic_approval', "pic_approval.temuan_id = temuan.id AND pic_approval.level_urut = 2", 'left')
             ->join('tindak_lanjut', 'tindak_lanjut.temuan_id = temuan.id', 'left')

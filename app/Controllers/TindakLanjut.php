@@ -156,9 +156,28 @@ class TindakLanjut extends BaseController
 
     public function download($id)
     {
-        $bukti = $this->buktiModel->find($id);
+        $bukti = $this->buktiModel
+            ->select('bukti_pendukung.*, tindak_lanjut.temuan_id, temuan.pic_id, u_pic.department_id as pic_dept_id')
+            ->join('tindak_lanjut', 'tindak_lanjut.id = bukti_pendukung.tindak_lanjut_id')
+            ->join('temuan', 'temuan.id = tindak_lanjut.temuan_id')
+            ->join('users u_pic', 'u_pic.id = temuan.pic_id')
+            ->where('bukti_pendukung.id', $id)
+            ->first();
+
         if (!$bukti) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        // Restriction Check:
+        // 1. If Auditor/Leader/Management (role_id != 2), they can download all
+        // 2. If PIC (role_id == 2), they can only download if it's their department
+        $roleId = session()->get('role_id');
+        $userDeptId = session()->get('department_id');
+
+        if ($roleId == 2) {
+            if ($bukti['pic_dept_id'] != $userDeptId) {
+                return redirect()->back()->with('error', 'Akses ditolak. Anda tidak memiliki izin untuk mengunduh file dari departemen lain.');
+            }
         }
 
         $filePath = WRITEPATH . 'uploads/' . $bukti['file_name'];

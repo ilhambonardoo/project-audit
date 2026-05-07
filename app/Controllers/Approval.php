@@ -25,6 +25,7 @@ class Approval extends BaseController
     public function index()
     {
         $roleId = session()->get('role_id');
+        $userDept = session()->get('department');
         $statusFilter = '';
 
         switch ($roleId) {
@@ -44,9 +45,19 @@ class Approval extends BaseController
                 return redirect()->back()->with('error', 'Akses Ditolak.');
         }
 
+        $builder = $this->temuanModel
+            ->select('temuan.*, users.name as pic_name, users.department')
+            ->join('users', 'users.id = temuan.pic_id')
+            ->where('status_progress', $statusFilter);
+
+        // Filter berdasarkan departemen jika role adalah Kadep (Role 3)
+        if ($roleId == 3) {
+            $builder->where('users.department', $userDept);
+        }
+
         $data = [
             'title'  => 'Daftar Persetujuan (Approval)',
-            'temuan' => $this->temuanModel->where('status_progress', $statusFilter)->findAll()
+            'temuan' => $builder->findAll()
         ];
 
         return view('approval/index', $data);

@@ -17,56 +17,60 @@ class Dashboard extends BaseController
         $this->tindakLanjutModel = new TindakLanjutModel();
     }
 
-    public function index()
-    {
-        $session = session();
-        $role_id = $session->get('role_id');
-        $user_id = $session->get('id');
-        $today   = date('Y-m-d');
 
-        $builder = $this->temuanModel;
-        
-        if ($role_id == 2) {
-            $builder = $builder->where('pic_id', $user_id);
+    private function getFilteredBuilder(){
+        $role_id = session()->get('role_id');
+        $department = session()->get('department');
+
+        $builder = $this->temuanModel->builder();
+
+        if(!in_array($role_id, [1, 6])){
+            $builder->select('temuan.*')->join('users', 'users.id = temuan.pic_id')->where('users.department', $department);
         }
 
-        $total = (clone $builder)->countAllResults();
+        return $builder;
+    }
 
-        $open = (clone $builder)->where('status_progress', 'Open')->countAllResults();
 
-        $proses = (clone $builder)
-            ->groupStart()
-                ->where('status_progress', 'On Progress')
-                ->orLike('status_progress', 'Waiting', 'after')
-            ->groupEnd()
-            ->countAllResults();
 
-        $closed = (clone $builder)->where('status_progress', 'Closed')->countAllResults();
+    public function index()
+    {
+        $today = date('Y-m-d');
 
-        $on_time_count = (clone $builder)
+        // ini buat hitung statistik menggunakan builder yang sudah di filter
+        $total = $this->getFilteredBuilder()->countAllResults();
+        $open = $this->getFilteredBuilder()->where('status_progress', 'Open')->countAllResults();
+        $closed = $this->getFilteredBuilder()->where('status_progress', 'Closed')->countAllResults();
+
+        $proses = $this->getFilteredBuilder()->groupStart()
+                    ->where('status_progress', 'On Progress')
+                    ->orLike('status_progress', 'Waiting', 'after')
+                    ->groupEnd()->countAllResults();
+
+        // Data chart (overdue atau on time)
+        $on_time_count = $this->getFilteredBuilder()
             ->where('status_progress', 'Closed')
-            ->where('updated_at <=', 'deadline', false)
-            ->countAllResults();
-            
-        $overdue_count = (clone $builder)
-            ->where('status_progress', 'Closed')
-            ->where('updated_at >', 'deadline', false)
+            ->where('temuan.updated_at <= temuan.deadline')
             ->countAllResults();
 
-        $early_warning = (clone $builder)
+        $overdue_count_closed = $this->getFilteredBuilder()
+            ->where('status_progress', 'Closed')
+            ->where('temuan.updated_at > temuan.deadline')
+            ->countAllResults();
+
+        $early_warning = $this->getFilteredBuilder()
             ->where('status_progress !=', 'Closed')
             ->orderBy('deadline', 'ASC')
             ->limit(5)
-            ->findAll();
+            ->get()
+            ->getResultArray();
 
-        $overdue_alert_count = (clone $builder)
+        $overdue_alert_count = $this->getFilteredBuilder()
             ->where('status_progress !=', 'Closed')
             ->where('deadline <', $today)
             ->countAllResults();
 
-        $pending_verif = $this->tindakLanjutModel
-            ->where('status_verifikasi', 'pending')
-            ->countAllResults();
+        $pending_verif = $this->getPendingVerifCount();
 
         $data = [
             'title'         => 'Dashboard Analytics',
@@ -77,7 +81,7 @@ class Dashboard extends BaseController
             'closed'        => $closed,
             'chart_data'    => [
                 'on_time' => $on_time_count,
-                'overdue' => $overdue_count
+                'overdue' => $overdue_count_closed
             ],
             'early_warning' => $early_warning,
             'overdue_count' => $overdue_alert_count,
@@ -85,5 +89,23 @@ class Dashboard extends BaseController
         ];
 
         return view('dashboard/index', $data);
+
+    }
+
+    private function getPendingVerifCount()
+    {
+        $role_id = session()->get('role_id');
+        $department = session()->get('department');
+        
+        $builder = $this->tindakLanjutModel->builder();
+        $builder->where('status_verifikasi', 'pending');
+
+        if (!in_array($role_id, [1, 6])) {
+            $builder->join('temuan', 'temuan.id = tindak_lanjut.temuan_id')
+                    ->join('users', 'users.id = temuan.pic_id')
+                    ->where('users.department', $department);
+        }
+
+        return $builder->countAllResults();
     }
 }

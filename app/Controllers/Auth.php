@@ -34,13 +34,14 @@ class Auth extends BaseController
         if ($user) {
             if (password_verify($password, $user['password'])) {
                 $ses_data = [
-                    'id'         => $user['id'],
-                    'name'       => $user['name'],
-                    'email'      => $user['email'],
-                    'role_id'    => $user['role_id'],
-                    'department' => $user['department'],
-                    'signature'  => $user['signature'],
-                    'isLoggedIn' => TRUE
+                    'id'            => $user['id'],
+                    'name'          => $user['name'],
+                    'email'         => $user['email'],
+                    'role_id'       => $user['role_id'],
+                    'department_id' => $user['department_id'],
+                    'department'    => $user['department'],
+                    'signature'     => $user['signature'],
+                    'isLoggedIn'    => TRUE
                 ];
                 $session->set($ses_data);
                 return redirect()->to('/dashboard');
