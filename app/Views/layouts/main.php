@@ -18,6 +18,23 @@
 
     <div class="main-content">
       <div class="container-fluid px-4">
+        <?php 
+          // Cek apakah tanda tangan wajib untuk role ini
+          $roleId = session()->get('role_id');
+          $hasSignature = session()->get('signature');
+          $needsSignature = !in_array($roleId, [2]); // Role 2 (Auditee) tidak butuh signature
+          
+          if ($needsSignature && empty($hasSignature)) : 
+        ?>
+          <div class="alert alert-warning border-0 shadow-sm mt-3 d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-warning"></i>
+            <div>
+              <strong class="d-block">Tanda Tangan Digital Diperlukan!</strong>
+              <span>Sistem mendeteksi Anda belum memiliki tanda tangan digital. Mohon lengkapi <a href="<?= base_url('profile') ?>" class="alert-link">Profil Anda</a> untuk melanjutkan proses audit/persetujuan.</span>
+            </div>
+          </div>
+        <?php endif; ?>
+
         <?php if (session()->getFlashdata('success')) : ?>
           <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
             <strong>Sukses!</strong> <?= session()->getFlashdata('success') ?>

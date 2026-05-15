@@ -62,6 +62,11 @@ class Temuan extends BaseController
 
     public function store()
     {
+        // Validasi tanda tangan untuk Auditor
+        if (empty(session()->get('signature'))) {
+            return redirect()->back()->withInput()->with('error', 'Anda harus memiliki tanda tangan digital sebelum membuat temuan. Silakan update di menu Profil.');
+        }
+
         if (!$this->validate([
             'pic_id'        => 'required',
             'klausul'       => 'required',

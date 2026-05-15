@@ -67,6 +67,13 @@ class Approval extends BaseController
     {
         $roleId   = session()->get('role_id');
         $userId   = session()->get('id');
+        $signature = session()->get('signature');
+
+        // Validasi tanda tangan sebelum memproses approval
+        if (empty($signature)) {
+            return redirect()->back()->with('error', 'Anda harus memiliki tanda tangan digital sebelum melakukan persetujuan/penolakan. Silakan update di menu Profil.');
+        }
+
         $temuanId = $this->request->getPost('temuan_id');
         $decision = $this->request->getPost('decision');
         $notes    = $this->request->getPost('notes');
