@@ -74,6 +74,13 @@ class Auth extends BaseController
     public function updateProfile()
     {
         $userId = session()->get('id');
+        $roleId = session()->get('role_id');
+
+        // Prevent Auditee/PIC from updating signature
+        if ($roleId == 2) {
+            return redirect()->to('/profile')->with('error', 'Auditee tidak diperbolehkan memiliki tanda tangan digital.');
+        }
+
         $signature = $this->request->getPost('signature');
 
         if ($signature) {
