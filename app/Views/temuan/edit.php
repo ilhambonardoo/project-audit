@@ -57,7 +57,7 @@
                 </div>
 
                 <div class="col-md-12">
-                    <label class="form-label fw-bold small text-muted">Uraian / Detail Temuan</label>
+                    <label class="form-label fw-bold small text-muted">Uraian Temuan</label>
                     <textarea class="form-control" name="uraian_temuan" rows="4" required><?= esc($temuan['uraian_temuan']); ?></textarea>
                 </div>
 

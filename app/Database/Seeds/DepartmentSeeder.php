@@ -9,14 +9,17 @@ class DepartmentSeeder extends Seeder
     public function run()
     {
         $data = [
-            ['name' => 'Produksi'],
-            ['name' => 'Teknik / Maintenance'],
-            ['name' => 'Quality Control'],
-            ['name' => 'Finance / Accounting'],
-            ['name' => 'Human Resources'],
-            ['name' => 'Logistik / Warehouse'],
-            ['name' => 'Management'],
-            ['name' => 'Internal Audit']
+            ['name' => 'Departemen Produksi'],
+            ['name' => 'Departemen Teknik'],
+            ['name' => 'Departemen Quality Control'],
+            ['name' => 'Departemen Finance Accounting Tax'],
+            ['name' => 'Departemen Human Resources'],
+            ['name' => 'Departemen Logistik'],
+            ['name' => 'Departemen Management'],
+            ['name' => 'Departemen Internal Audit'],
+            ['name' => 'Departemen Management Information System'],
+            ['name' => 'Departemen Ekspedisi'],
+            ['name' => 'Departemen Procurement']
         ];
 
         $this->db->table('departments')->insertBatch($data);

@@ -10,7 +10,7 @@
 <div class="row align-items-center my-4">
     <div class="col">
         <h4 class="fw-bold mb-0">Input Temuan Baru</h4>
-        <p class="text-muted mt-2 mb-0">Lengkapi detail temuan di bawah ini. <span class="badge bg-info text-dark ms-2"><i class="bi bi-alarm"></i> Deadline otomatis: 30 Hari (Early Warning System)</span></p>
+        <p class="text-muted mt-2 mb-0">Lengkapi detail temuan di bawah ini. <span class="badge bg-info text-dark ms-2"><i class="bi bi-alarm"></i> Deadline otomatis: 30 Hari (Close)</span></p>
     </div>
     <div class="col-auto">
         <a href="/temuan" class="btn btn-light rounded-pill px-4 border shadow-sm">
@@ -31,10 +31,17 @@
                 <!-- Klausul & Auditee -->
                 <div class="col-md-6 mb-3">
                     <label for="klausul" class="form-label fw-semibold">Klausul Audit</label>
-                    <input type="text" class="form-control form-control-lg border-2" id="klausul" name="klausul" placeholder="Contoh: ISO 9001:2015" required autofocus>
+                    <input type="text" class="form-control form-control-lg border-2" id="klausul" name="klausul" placeholder="Tambahkan Klausul..." required autofocus>
                 </div>
+                <!-- Kriteria/SOP -->
                 <div class="col-md-6 mb-3">
-                    <label for="pic_id" class="form-label fw-semibold">Tugaskan ke Auditee</label>
+                    <label for="kriteria" class="form-label fw-semibold">SOP</label>
+                    <textarea class="form-control form-control-lg border-2 shadow-none" id="kriteria" name="kriteria" rows="1" placeholder="Tuliskan standar operasional..." required></textarea>
+                </div>
+
+                <!-- PIC AUDITEE -->
+                <div class="col-12 mb-3">
+                    <label for="pic_id" class="form-label fw-semibold">PIC (Auditee)</label>
                     <select class="form-select form-select-lg border-2 shadow-none" id="pic_id" name="pic_id" required>
                         <option value="" selected disabled>-- Pilih Auditee --</option>
                         <?php foreach($users as $user): ?>
@@ -51,19 +58,13 @@
 
                 <!-- Uraian Temuan -->
                 <div class="col-12 mb-3">
-                    <label for="uraian_temuan" class="form-label fw-semibold">Uraian / Detail Ketidaksesuaian</label>
+                    <label for="uraian_temuan" class="form-label fw-semibold">Uraian Temuan</label>
                     <textarea class="form-control border-2 shadow-none" id="uraian_temuan" name="uraian_temuan" rows="4" placeholder="Deskripsikan temuan secara detil..." required></textarea>
                 </div>
 
-                <!-- Kriteria/SOP -->
-                <div class="col-md-6 mb-3">
-                    <label for="kriteria" class="form-label fw-semibold">Kriteria / SOP Terkait</label>
-                    <textarea class="form-control border-2 shadow-none" id="kriteria" name="kriteria" rows="3" placeholder="Sebutkan pasal atau standar operasional..." required></textarea>
-                </div>
-
                 <!-- Rekomendasi Auditor -->
-                <div class="col-md-6 mb-3">
-                    <label for="rekomendasi" class="form-label fw-semibold">Rekomendasi / Saran Auditor</label>
+                <div class="col-md-12 mb-3">
+                    <label for="rekomendasi" class="form-label fw-semibold">Rekomendasi</label>
                     <textarea class="form-control border-2 shadow-none" id="rekomendasi" name="rekomendasi" rows="3" placeholder="Apa tindakan perbaikan yang disarankan?" required></textarea>
                 </div>
 
@@ -101,7 +102,7 @@
             <div class="d-grid d-md-flex justify-content-md-end gap-3">
                 <button type="reset" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">Reset Form</button>
                 <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow">
-                    <i class="bi bi-cloud-upload me-2"></i> Simpan Temuan & Aktifkan EWS
+                    <i class="bi bi-cloud-upload me-2"></i> Registrasi Temuan & Monitoring Tindak Lanjut
                 </button>
             </div>
         </form>

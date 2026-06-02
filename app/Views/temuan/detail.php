@@ -91,7 +91,7 @@
                 <hr class="my-4 op-10">
 
                 <div class="mb-4">
-                    <label class="fw-bold text-uppercase small text-muted mb-2">Uraian / Detail Temuan</label>
+                    <label class="fw-bold text-uppercase small text-muted mb-2">Uraian Temuan</label>
                     <div class="bg-light p-3 rounded-3 border-start border-4 border-primary">
                         <?= nl2br($temuan['uraian_temuan']); ?>
                     </div>
