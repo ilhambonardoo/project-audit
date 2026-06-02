@@ -88,9 +88,10 @@
                 <div class="col-md-6 mb-3">
                     <label for="level_temuan" class="form-label fw-semibold">Level Risiko</label>
                     <select class="form-select border-2 shadow-none" id="level_temuan" name="level_temuan" required>
-                        <option value="Rendah">Rendah (Low Risk - Observasi)</option>
-                        <option value="Menengah" selected>Menengah (Minor NC)</option>
-                        <option value="Tinggi">Tinggi (Major NC)</option>
+                        <option value="Observasi">Observasi</option>
+                        <option value="Rendah">Rendah</option>
+                        <option value="Menengah" selected>Menengah</option>
+                        <option value="Tinggi">Tinggi</option>
                     </select>
                 </div>
             </div>

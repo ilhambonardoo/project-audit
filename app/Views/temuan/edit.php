@@ -44,6 +44,7 @@
                 <div class="col-md-6">
                     <label class="form-label fw-bold small text-muted">Level Risiko</label>
                     <select class="form-select" name="level_temuan" required>
+                        <option value="Observasi" <?= ($temuan['level_temuan'] == 'Observasi') ? 'selected' : ''; ?>>Observasi</option>
                         <option value="Rendah" <?= ($temuan['level_temuan'] == 'Rendah') ? 'selected' : ''; ?>>Rendah</option>
                         <option value="Menengah" <?= ($temuan['level_temuan'] == 'Menengah') ? 'selected' : ''; ?>>Menengah</option>
                         <option value="Tinggi" <?= ($temuan['level_temuan'] == 'Tinggi') ? 'selected' : ''; ?>>Tinggi</option>

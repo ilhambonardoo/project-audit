@@ -55,6 +55,7 @@
                                 if ($row['level_temuan'] == 'Tinggi') $risk_badge = 'bg-danger';
                                 elseif ($row['level_temuan'] == 'Menengah') $risk_badge = 'bg-warning text-dark';
                                 elseif ($row['level_temuan'] == 'Rendah') $risk_badge = 'bg-success';
+                                elseif ($row['level_temuan'] == 'Observasi') $risk_badge = 'bg-info text-dark';
                             ?>
                             <tr>
                                 <td class="px-4 text-center"><?= $no++; ?></td>
