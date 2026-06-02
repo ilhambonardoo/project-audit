@@ -5,10 +5,10 @@
     <div class="row">
         <div class="col-12 px-4 text-end mb-3">
              <a href="<?= base_url('laporan/exportPdf/' . $pic['pic_id']) ?>" class="btn btn-danger" target="_blank">
-                <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                <i class="bi bi-file-earmark-pdf"></i> Ekspor PDF
             </a>
             <a href="<?= base_url('laporan/exportWord/' . $pic['pic_id']) ?>" class="btn btn-warning">
-                <i class="bi bi-file-earmark-word"></i> Export Word
+                <i class="bi bi-file-earmark-word"></i> Ekspor Word
             </a>
         </div>
         <div class="col-12">
@@ -56,10 +56,10 @@
                                     </td>
                                     <td class="text-center small">
                                         <div class="fw-bold mb-1"><?= esc((string)$t['level_temuan']) ?></div>
-                                        <?php if (trim(strtolower((string)$t['status_progress'])) === 'closed') : ?>
-                                            <span class="badge bg-info text-dark border border-dark rounded-0 px-2">CLOSED</span>
+                                        <?php if (trim(strtolower((string)$t['status_progress'])) === 'selesai') : ?>
+                                            <span class="badge bg-info text-dark border border-dark rounded-0 px-2">SELESAI</span>
                                         <?php else : ?>
-                                            <span class="badge bg-warning text-dark border border-dark rounded-0 px-2">OPEN</span>
+                                            <span class="badge bg-warning text-dark border border-dark rounded-0 px-2">BUKA</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center small"><?= esc((string)$t['deadline']) ?></td>

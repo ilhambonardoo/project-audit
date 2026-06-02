@@ -92,7 +92,7 @@ class Temuan extends BaseController
             'rekomendasi'     => $this->request->getPost('rekomendasi'),
             'kategori_status' => $this->request->getPost('kategori_status'),
             'level_temuan'    => $this->request->getPost('level_temuan'),
-            'status_progress' => 'Waiting Lead Auditor Approval',
+            'status_progress' => 'Menunggu Persetujuan Lead Auditor',
             'deadline'        => $deadline,
             'auditor_signature_snapshot' => session()->get('signature'),
         ]);
@@ -160,8 +160,8 @@ class Temuan extends BaseController
         $catatan          = $this->request->getPost('catatan_auditor');
 
         $temuan = $this->temuanModel->find($temuan_id);
-        if (!$temuan || $temuan['status_progress'] !== 'On Progress') {
-            return redirect()->back()->with('error', 'Temuan ini sudah dalam tahap Approval atau sudah Closed.');
+        if (!$temuan || $temuan['status_progress'] !== 'Sedang Berjalan') {
+            return redirect()->back()->with('error', 'Temuan ini sudah dalam tahap Persetujuan atau sudah Selesai.');
         }
 
         if ($keputusan == 'approve') {
@@ -172,11 +172,11 @@ class Temuan extends BaseController
             ]);
 
             $this->temuanModel->update($temuan_id, [
-                'status_progress' => 'Waiting Kadep Approval'
+                'status_progress' => 'Menunggu Persetujuan Kadep'
             ]);
 
             $message = 'Tindak lanjut disetujui. Sekarang menunggu persetujuan Kepala Departemen.';
-            $aksi_log = 'Approve Bukti (Ke Kadep)';
+            $aksi_log = 'Setujui Bukti (Ke Kadep)';
         } else {
             $this->tindakLanjutModel->update($tindak_lanjut_id, [
                 'status_verifikasi' => 'revision_required',
@@ -184,11 +184,11 @@ class Temuan extends BaseController
             ]);
 
             $this->temuanModel->update($temuan_id, [
-                'status_progress' => 'On Progress'
+                'status_progress' => 'Sedang Berjalan'
             ]);
 
             $message = 'Tindak lanjut ditolak. PIC akan diminta melakukan revisi.';
-            $aksi_log = 'Reject Bukti (Minta Revisi)';
+            $aksi_log = 'Tolak Bukti (Minta Revisi)';
         }
 
         $this->AuditTrailModel->save([
@@ -241,10 +241,10 @@ class Temuan extends BaseController
         ];
 
         // Jika status saat ini adalah Draft (hasil reject Lead Auditor), 
-        // maka setelah diupdate, status kembali ke Waiting Lead Auditor Approval
+        // maka setelah diupdate, status kembali ke Menunggu Persetujuan Lead Auditor
         // dan bubuhkan tanda tangan baru
         if ($temuan['status_progress'] === 'Draft') {
-            $updateData['status_progress'] = 'Waiting Lead Auditor Approval';
+            $updateData['status_progress'] = 'Menunggu Persetujuan Lead Auditor';
             $updateData['auditor_signature_snapshot'] = session()->get('signature');
         }
 

@@ -112,7 +112,7 @@ class Laporan extends BaseController
         $table->addCell(1500, $headerCellStyle)->addText("Kriteria", $headerTextStyle);
 
         foreach ($temuanList as $index => $t) {
-            $status = (trim(strtolower((string)$t['status_progress'])) === 'closed') ? 'CLOSED' : 'OPEN';
+            $status = (trim(strtolower((string)$t['status_progress'])) === 'selesai') ? 'SELESAI' : 'BUKA';
             
             $table->addRow();
             $table->addCell(400)->addText((string)($index + 1), $cellTextStyle);

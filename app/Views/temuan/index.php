@@ -66,7 +66,7 @@
                                 </td>
                                 <td><?= $row['judul_temuan']; ?></td>
                                 <td>
-                                    <?= isset($row['pic_name']) ? esc($row['pic_name']) : 'Unknown'; ?>
+                                    <?= isset($row['pic_name']) ? esc($row['pic_name']) : 'Tidak Diketahui'; ?>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge <?= $risk_badge; ?> rounded-pill px-3">
@@ -76,7 +76,7 @@
                                 <td class="text-center">
                                     <?php if ($row['status_progress'] == 'Draft') : ?>
                                         <span class="badge bg-secondary px-3 rounded-pill">
-                                            Revision Required
+                                            Perlu Revisi
                                         </span>
                                     <?php else : ?>
                                         <span class="badge bg-outline-primary border border-primary text-primary px-3 rounded-pill">
@@ -87,7 +87,7 @@
                                 <td class="text-center">
                                     <span class="badge <?= ($diff < 0) ? 'bg-danger' : 'bg-light text-dark'; ?> border">
                                         <?= date('d M Y', $deadline_date); ?>
-                                        <?= ($diff < 0) ? ' (Overdue!)' : ''; ?>
+                                        <?= ($diff < 0) ? ' (Terlambat!)' : ''; ?>
                                     </span>
                                 </td>
                                 <td class="text-center">

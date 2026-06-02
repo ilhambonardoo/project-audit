@@ -39,34 +39,34 @@ class Dashboard extends BaseController
 
         // ini buat hitung statistik menggunakan builder yang sudah di filter
         $total = $this->getFilteredBuilder()->countAllResults();
-        $open = $this->getFilteredBuilder()->where('status_progress', 'Open')->countAllResults();
-        $closed = $this->getFilteredBuilder()->where('status_progress', 'Closed')->countAllResults();
+        $open = $this->getFilteredBuilder()->where('status_progress', 'Buka')->countAllResults();
+        $closed = $this->getFilteredBuilder()->where('status_progress', 'Selesai')->countAllResults();
 
         $proses = $this->getFilteredBuilder()->groupStart()
-                    ->where('status_progress', 'On Progress')
-                    ->orLike('status_progress', 'Waiting', 'after')
+                    ->where('status_progress', 'Sedang Berjalan')
+                    ->orLike('status_progress', 'Menunggu', 'after')
                     ->groupEnd()->countAllResults();
 
         // Data chart (overdue atau on time)
         $on_time_count = $this->getFilteredBuilder()
-            ->where('status_progress', 'Closed')
+            ->where('status_progress', 'Selesai')
             ->where('temuan.updated_at <= temuan.deadline')
             ->countAllResults();
 
         $overdue_count_closed = $this->getFilteredBuilder()
-            ->where('status_progress', 'Closed')
+            ->where('status_progress', 'Selesai')
             ->where('temuan.updated_at > temuan.deadline')
             ->countAllResults();
 
         $early_warning = $this->getFilteredBuilder()
-            ->where('status_progress !=', 'Closed')
+            ->where('status_progress !=', 'Selesai')
             ->orderBy('deadline', 'ASC')
             ->limit(5)
             ->get()
             ->getResultArray();
 
         $overdue_alert_count = $this->getFilteredBuilder()
-            ->where('status_progress !=', 'Closed')
+            ->where('status_progress !=', 'Selesai')
             ->where('deadline <', $today)
             ->countAllResults();
 

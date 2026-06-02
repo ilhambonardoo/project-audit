@@ -30,7 +30,7 @@
             <div class="row g-4">
                 <!-- Klausul & Auditee -->
                 <div class="col-md-6 mb-3">
-                    <label for="klausul" class="form-label fw-semibold">Grup / Klausul Audit</label>
+                    <label for="klausul" class="form-label fw-semibold">Klausul Audit</label>
                     <input type="text" class="form-control form-control-lg border-2" id="klausul" name="klausul" placeholder="Contoh: ISO 9001:2015" required autofocus>
                 </div>
                 <div class="col-md-6 mb-3">

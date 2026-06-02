@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Laporan Temuan Audit - <?= esc((string)$pic['pic_name']) ?></title>
@@ -111,8 +111,8 @@
                 </td>
                 <td class="text-center">
                     <div class="fw-bold"><?= esc((string)$t['level_temuan']) ?></div>
-                    <div class="badge" style="background-color: <?= (trim(strtolower((string)$t['status_progress'])) === 'closed') ? '#0dcaf0' : '#ffc107' ?>;">
-                        <?= (trim(strtolower((string)$t['status_progress'])) === 'closed') ? 'CLOSED' : 'OPEN' ?>
+                    <div class="badge" style="background-color: <?= (trim(strtolower((string)$t['status_progress'])) === 'selesai') ? '#0dcaf0' : '#ffc107' ?>;">
+                        <?= (trim(strtolower((string)$t['status_progress'])) === 'selesai') ? 'SELESAI' : 'BUKA' ?>
                     </div>
                 </td>
                 <td class="text-center"><?= esc((string)$t['deadline']) ?></td>

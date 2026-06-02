@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/auth'); ?>
 
 <?= $this->section('title'); ?>
-Login
+Masuk
 <?= $this->endSection(); ?>
 
 <?= $this->section('content'); ?>
@@ -31,7 +31,7 @@ Login
 
                 <form action="/auth/loginProcess" method="post">
                     <div class="form-group mb-4">
-                        <label for="inputEmail" class="form-label fw-bold small text-muted text-uppercase mb-2">Email Address</label>
+                        <label for="inputEmail" class="form-label fw-bold small text-muted text-uppercase mb-2">Alamat Email</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-primary"></i></span>
                             <input 
@@ -70,7 +70,7 @@ Login
 
             <div class="login-footer py-3 text-center border-top">
                 <p class="footer-text mb-0 small text-muted">© 2024 <span class="footer-brand fw-bold text-primary">PT SanQua</span></p>
-                <span class="small text-muted">Internal Audit System v1.0</span>
+                <span class="small text-muted">Sistem Audit Internal v1.0</span>
             </div>
         </div>
     </div>

@@ -144,7 +144,7 @@
                 <h6 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2"></i> Status Tindak Lanjut</h6>
             </div>
             <div class="card-body p-4">
-                <?php if ($temuan['status_progress'] == 'Waiting Lead Auditor Approval') : ?>
+                <?php if ($temuan['status_progress'] == 'Menunggu Persetujuan Lead Auditor') : ?>
                     <div class="text-center py-5">
                         <div class="mb-3">
                             <i class="bi bi-hourglass-split display-1 text-muted opacity-25"></i>
@@ -220,8 +220,8 @@
                                     <label class="form-label small fw-bold">Ambil Keputusan</label>
                                     <select name="keputusan" class="form-select shadow-none border-2" required>
                                         <option value="" selected disabled>-- Pilih Status Verifikasi --</option>
-                                        <option value="approve">Setujui (Approve / Closed)</option>
-                                        <option value="reject">Tolak (Revision Required)</option>
+                                        <option value="approve">Setujui (Selesai)</option>
+                                        <option value="reject">Tolak (Perlu Revisi)</option>
                                     </select>
                                 </div>
 

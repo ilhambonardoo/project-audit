@@ -30,16 +30,16 @@ class Approval extends BaseController
 
         switch ($roleId) {
             case 6: // Lead Auditor
-                $statusFilter = 'Waiting Lead Auditor Approval';
+                $statusFilter = 'Menunggu Persetujuan Lead Auditor';
                 break;
             case 3: // Kadep
-                $statusFilter = 'Waiting Kadep Approval';
+                $statusFilter = 'Menunggu Persetujuan Kadep';
                 break;
             case 5: // Direktur / CFO
-                $statusFilter = 'Waiting Direktur Approval';
+                $statusFilter = 'Menunggu Persetujuan Direktur';
                 break;
             case 4: // Plant Manager
-                $statusFilter = 'Waiting Manager Approval';
+                $statusFilter = 'Menunggu Persetujuan Manager';
                 break;
             default:
                 return redirect()->back()->with('error', 'Akses Ditolak.');
@@ -90,16 +90,16 @@ class Approval extends BaseController
         $db = \Config\Database::connect();
         
         try {
-            if ($decision === 'Reject') {
+            if ($decision === 'Tolak') {
                 if ($roleId == 6) {
                     $nextStatus = 'Draft';
-                    $actionLog = "Rejected by Lead Auditor - Auditor must revise. Reason: " . $notes;
+                    $actionLog = "Ditolak oleh Lead Auditor - Auditor harus revisi. Alasan: " . $notes;
                 } else if ($roleId == 3) {
-                    $nextStatus = 'Open';
-                    $actionLog  = "Rejected by Kadep - Back to Open. Reason: " . $notes;
+                    $nextStatus = 'Buka';
+                    $actionLog  = "Ditolak oleh Kadep - Kembali ke Status Buka. Alasan: " . $notes;
                 } else {
-                    $nextStatus = 'On Progress';
-                    $actionLog  = "Rejected by Role " . $roleId . " - Reason: " . $notes;
+                    $nextStatus = 'Sedang Berjalan';
+                    $actionLog  = "Ditolak oleh Role " . $roleId . " - Alasan: " . $notes;
                 }
 
                 $updateData = [
@@ -122,26 +122,26 @@ class Approval extends BaseController
                         ]);
                     }
                 }
-            } else if ($decision === 'Approve') {
+            } else if ($decision === 'Setujui') {
                 switch ($roleId) {
                     case 6:
-                        $nextStatus = 'Open';
-                        $actionLog  = "Approved by Lead Auditor - Ready for Auditee";
+                        $nextStatus = 'Buka';
+                        $actionLog  = "Disetujui oleh Lead Auditor - Siap untuk Auditee";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus, 'catatan_revisi' => null]);
                         break;
                     case 3:
-                        $nextStatus = 'Waiting Direktur Approval';
-                        $actionLog  = "Approved by Kepala Departemen";
+                        $nextStatus = 'Menunggu Persetujuan Direktur';
+                        $actionLog  = "Disetujui oleh Kepala Departemen";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                     case 5:
-                        $nextStatus = 'Waiting Manager Approval';
-                        $actionLog  = "Approved by Direktur / CFO";
+                        $nextStatus = 'Menunggu Persetujuan Manager';
+                        $actionLog  = "Disetujui oleh Direktur / CFO";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                     case 4:
-                        $nextStatus = 'Closed';
-                        $actionLog  = "Approved by Plant Manager (Closed)";
+                        $nextStatus = 'Selesai';
+                        $actionLog  = "Disetujui oleh Plant Manager (Selesai)";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                 }
@@ -152,7 +152,7 @@ class Approval extends BaseController
                 'approver_id' => $userId,
                 'level_urut'  => $roleId,
                 'status'      => strtolower($decision),
-                'signature_snapshot' => ($decision === 'Reject') ? null : session()->get('signature'),
+                'signature_snapshot' => ($decision === 'Tolak') ? null : session()->get('signature'),
                 'created_at'  => date('Y-m-d H:i:s')
             ]);
 

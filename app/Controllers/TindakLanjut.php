@@ -35,7 +35,7 @@ class TindakLanjut extends BaseController
             return redirect()->to('/dashboard')->with('error', 'Data tidak ditemukan atau Anda tidak memiliki akses ke temuan ini.');
         }
 
-        if ($temuan['status_progress'] === 'Waiting Lead Auditor Approval') {
+        if ($temuan['status_progress'] === 'Menunggu Persetujuan Lead Auditor') {
             return redirect()->to('/temuan/show/' . $temuan_id)->with('error', 'Temuan ini belum disetujui (ACC) oleh Lead Auditor.');
         }
 
@@ -128,7 +128,7 @@ class TindakLanjut extends BaseController
             }
 
             $this->temuanModel->update($temuan_id, [
-                'status_progress' => 'On Progress'
+                'status_progress' => 'Sedang Berjalan'
             ]);
 
             $this->buktiModel->save([
