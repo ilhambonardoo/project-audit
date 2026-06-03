@@ -34,11 +34,9 @@ class Laporan extends BaseController
             ->join('users', 'users.id = temuan.pic_id')
             ->groupBy('pic_id');
 
-        // Jika Kadep (Role 3), hanya lihat auditee di departemennya
-        if ($roleId == 3) {
-            $builder->where('users.department', $userDept);
-        }
-
+        // Top 3 tier roles (Ass Head, CFO, Direktur) can see all departments.
+        // Role 3 (Ass Head) no longer restricted by department.
+        
         $data['pic_groups'] = $builder->findAll();
 
         return view('laporan/index', $data);
@@ -61,6 +59,7 @@ class Laporan extends BaseController
         $data['temuan'] = $this->getLaporanDataByPic($pic_id);
         $data['pic'] = $data['temuan'][0];
         $data['is_pdf'] = true;
+        $data['no_urut'] = $this->request->getGet('no_urut') ?? 5;
 
         $html = view('laporan/pdf_template', $data);
 
@@ -112,7 +111,7 @@ class Laporan extends BaseController
         $table->addCell(1500, $headerCellStyle)->addText("Kriteria", $headerTextStyle);
 
         foreach ($temuanList as $index => $t) {
-            $status = (trim(strtolower((string)$t['status_progress'])) === 'closed') ? 'CLOSED' : 'OPEN';
+            $status = in_array(trim(strtolower((string)$t['status_progress'])), ['selesai', 'closed']) ? 'SELESAI' : 'BUKA';
             
             $table->addRow();
             $table->addCell(400)->addText((string)($index + 1), $cellTextStyle);
@@ -132,37 +131,37 @@ class Laporan extends BaseController
         // Signatures
         $sigTable = $section->addTable(['borderSize' => 0, 'cellMargin' => 0]);
         $sigTable->addRow();
-        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("Mengetahui:", ['bold' => true], ['alignment' => 'center']);
+        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("Dibuat Oleh:", ['bold' => true], ['alignment' => 'center']);
         $sigTable->addCell(5000, ['alignment' => 'center'])->addText("Diperiksa Oleh:", ['bold' => true], ['alignment' => 'center']);
         $sigTable->addCell(5000, ['alignment' => 'center'])->addText("Disetujui Oleh:", ['bold' => true], ['alignment' => 'center']);
         
         $sigTable->addRow();
         // Row for signature images
         $cell1 = $sigTable->addCell(5000);
-        if (!empty($picInfo['dept_head_signature'])) {
+        if (!empty($picInfo['ass_head_signature'])) {
             try {
-                $cell1->addImage($picInfo['dept_head_signature'], ['height' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $cell1->addImage($picInfo['ass_head_signature'], ['height' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
             } catch (\Exception $e) { $cell1->addTextBreak(3); }
         } else { $cell1->addTextBreak(3); }
 
         $cell2 = $sigTable->addCell(5000);
-        if (!empty($picInfo['director_signature'])) {
+        if (!empty($picInfo['cfo_signature'])) {
             try {
-                $cell2->addImage($picInfo['director_signature'], ['height' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $cell2->addImage($picInfo['cfo_signature'], ['height' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
             } catch (\Exception $e) { $cell2->addTextBreak(3); }
         } else { $cell2->addTextBreak(3); }
 
         $cell3 = $sigTable->addCell(5000);
-        if (!empty($picInfo['plant_manager_signature'])) {
+        if (!empty($picInfo['direktur_signature'])) {
             try {
-                $cell3->addImage($picInfo['plant_manager_signature'], ['height' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $cell3->addImage($picInfo['direktur_signature'], ['height' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
             } catch (\Exception $e) { $cell3->addTextBreak(3); }
         } else { $cell3->addTextBreak(3); }
 
         $sigTable->addRow();
-        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("(Ass. Head Corp Finance Controller)", ['bold' => true], ['alignment' => 'center']);
-        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("(Chief Financial Officer)", ['bold' => true], ['alignment' => 'center']);
-        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("(Plant Manager)", ['bold' => true], ['alignment' => 'center']);
+        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("(Ass Head Corp Internal Audit)", ['bold' => true], ['alignment' => 'center']);
+        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("(CFO)", ['bold' => true], ['alignment' => 'center']);
+        $sigTable->addCell(5000, ['alignment' => 'center'])->addText("(Direktur)", ['bold' => true], ['alignment' => 'center']);
         
         $filename = 'Laporan_Audit_' . str_replace(' ', '_', $picInfo['pic_name']) . '_' . date('Ymd') . '.docx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
@@ -183,16 +182,16 @@ class Laporan extends BaseController
                      tindak_lanjut.tanggapan_auditee, 
                      auditor.name as auditor_name, 
                      COALESCE(temuan.auditor_signature_snapshot, auditor.signature) as auditor_signature_final,
-                     dept_sig.signature_snapshot as dept_head_signature,
-                     plant_sig.signature_snapshot as plant_manager_signature,
-                     dir_sig.signature_snapshot as director_signature')
+                     ass_head_sig.signature_snapshot as ass_head_signature,
+                     cfo_sig.signature_snapshot as cfo_signature,
+                     direktur_sig.signature_snapshot as direktur_signature')
             ->join('users as pic', 'pic.id = temuan.pic_id')
             ->join('users as auditor', 'auditor.id = temuan.auditor_id', 'left')
             
-            // Subquery untuk mengambil tanda tangan terbaru yang tidak null
-            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 3 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as dept_sig', 'dept_sig.temuan_id = temuan.id', 'left')
-            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 4 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as plant_sig', 'plant_sig.temuan_id = temuan.id', 'left')
-            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 5 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as dir_sig', 'dir_sig.temuan_id = temuan.id', 'left')
+            // Subquery untuk mengambil tanda tangan terbaru dari Top 3 Tier
+            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 3 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as ass_head_sig', 'ass_head_sig.temuan_id = temuan.id', 'left')
+            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 5 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as cfo_sig', 'cfo_sig.temuan_id = temuan.id', 'left')
+            ->join('(SELECT temuan_id, signature_snapshot FROM approvals WHERE level_urut = 4 AND signature_snapshot IS NOT NULL ORDER BY id DESC LIMIT 1) as direktur_sig', 'direktur_sig.temuan_id = temuan.id', 'left')
 
             ->join('approvals as pic_approval', "pic_approval.temuan_id = temuan.id AND pic_approval.level_urut = 2", 'left')
             ->join('tindak_lanjut', 'tindak_lanjut.temuan_id = temuan.id', 'left')

@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<?php if (session()->get('role_id') == 1) : ?>
+<?php if (session()->get('role_id') == 6) : ?>
     <div class="row mb-4">
         <?php if ($overdue_count > 0) : ?>
             <div class="col-md-6 mb-3">
@@ -42,7 +42,7 @@
                     <i class="bi bi-shield-exclamation fs-1 me-3 text-dark"></i>
                     <div>
                         <h6 class="fw-bold mb-1 text-dark">Menunggu Verifikasi</h6>
-                        <p class="mb-0 small text-dark">Terdapat <strong><?= $pending_verif ?> bukti tindak lanjut</strong> dari PIC yang menunggu keputusan Anda (Approve/Reject).</p>
+                        <p class="mb-0 small text-dark">Terdapat <strong><?= $pending_verif ?> bukti tindak lanjut</strong> dari PIC yang menunggu keputusan Anda (Setujui/Tolak).</p>
                     </div>
                 </div>
             </div>
@@ -51,29 +51,18 @@
 <?php endif; ?>
 
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="fw-light mb-1">Total Temuan</h6>
-                    <h2 class="fw-bold mb-0"><?= $total ?></h2>
-                </div>
-                <i class="bi bi-files display-4 opacity-50"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-4 bg-danger text-white h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
-                    <h6 class="fw-light mb-1">Status Open</h6>
+                    <h6 class="fw-light mb-1">Status Buka</h6>
                     <h2 class="fw-bold mb-0"><?= $open ?></h2>
                 </div>
                 <i class="bi bi-envelope-open display-4 opacity-50"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-4 bg-warning text-dark h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
@@ -84,11 +73,11 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-4 bg-success text-white h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
-                    <h6 class="fw-light mb-1">Closed / Selesai</h6>
+                    <h6 class="fw-light mb-1">Selesai</h6>
                     <h2 class="fw-bold mb-0"><?= $closed ?></h2>
                 </div>
                 <i class="bi bi-check-circle display-4 opacity-50"></i>
@@ -176,7 +165,7 @@
                     <canvas id="performanceChart"></canvas>
                 </div>
                 <div class="mt-3 text-center small text-muted">
-                    <p class="mb-0">Perbandingan On Time vs Overdue pada temuan <strong>Closed</strong>.</p>
+                    <p class="mb-0">Perbandingan Tepat Waktu vs Terlambat pada temuan <strong>Selesai</strong>.</p>
                 </div>
             </div>
         </div>

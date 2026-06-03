@@ -23,7 +23,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
             $routes->get('/', 'Temuan::index');
             $routes->get('show/(:num)', 'Temuan::show/$1');
 
-            $routes->group('', ['filter' => 'role_id:1'], function($routes) {
+            $routes->group('', ['filter' => 'role_id:1, 6'], function($routes) {
                 $routes->get('create', 'Temuan::create');
                 $routes->post('store', 'Temuan::store');
                 $routes->get('edit/(:num)', 'Temuan::edit/$1');

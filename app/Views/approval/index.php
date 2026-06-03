@@ -74,13 +74,13 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Keputusan (Approve/Reject)</label>
+                        <label class="form-label">Keputusan (Setujui/Tolak)</label>
                         <select name="decision" class="form-select" required>
                             <option value="">-- Pilih Keputusan --</option>
-                            <option value="Approve">Approve</option>
-                            <option value="Reject">Reject</option>
+                            <option value="Setujui">Setujui</option>
+                            <option value="Tolak">Tolak</option>
                         </select>
-                        <div class="form-text">Reject akan mengembalikan status ke 'On Progress'.</div>
+                        <div class="form-text">Tolak akan mengembalikan status ke 'Sedang Berjalan'.</div>
                     </div>
 
                     <div class="mb-3">

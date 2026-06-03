@@ -2,7 +2,7 @@
   <div class="container-fluid px-4">
     <a class="navbar-brand navbar-brand-modern" href="/">
       <i class="bi bi-shield-check"></i>
-      <span class="brand-text">Audit System</span>
+      <span class="brand-text">Sistem Audit</span>
     </a>
     
     <button class="navbar-toggler navbar-toggler-modern" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -20,7 +20,7 @@
 
         <?php $role_id = session()->get('role_id'); ?>
 
-        <?php if ($role_id == 1) : ?>
+        <?php if (in_array($role_id, [1, 6])) : ?>
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= (url_is('temuan*')) ? 'active' : '' ?>" href="/temuan">
                 <i class="bi bi-clipboard-check"></i>
@@ -38,11 +38,11 @@
             </li>
         <?php endif; ?>
 
-        <?php if (in_array($role_id, [3, 4, 5, 6])) : ?>
+        <?php if (in_array($role_id, [1, 3, 4, 5, 6])) : ?>
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= url_is('/approval') ? "active" : "" ?>" href="/approval">
                 <i class="bi bi-check-circle"></i>
-                <span>Approval</span>
+                <span>Persetujuan</span>
               </a>
             </li>
         <?php endif; ?>
@@ -60,7 +60,7 @@
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= (url_is('user-management*')) ? 'active' : '' ?>" href="/user-management">
                 <i class="bi bi-people"></i>
-                <span>User Management</span>
+                <span>Manajemen Pengguna</span>
               </a>
             </li>
         <?php endif; ?>
@@ -86,7 +86,7 @@
             </li>
             <li>
               <a class="dropdown-item text-danger" href="/logout">
-                <i class="bi bi-box-arrow-right"></i> Logout
+                <i class="bi bi-box-arrow-right"></i> Keluar
               </a>
             </li>
           </ul>

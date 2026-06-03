@@ -66,7 +66,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <small class="text-muted">Gunakan 'Management' untuk Direktur atau Plant Manager jika tidak spesifik per departemen.</small>
+                        <small class="text-muted">Gunakan 'Management' untuk Direktur atau Management lainnya jika tidak spesifik per departemen.</small>
                     </div>
 
                     <div class="d-flex justify-content-between pt-3 border-top">

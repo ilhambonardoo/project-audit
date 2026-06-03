@@ -26,7 +26,7 @@
                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                     </div>
                     <div>
-                        <h6 class="fw-bold mb-1">Catatan Revisi Lead Auditor</h6>
+                        <h6 class="fw-bold mb-1">Catatan Revisi <?= ($auditor_role_id ?? null) == 6 ? 'Admin Auditor' : 'Lead Auditor'; ?></h6>
                         <p class="mb-0 small"><strong><?= $temuan['catatan_revisi']; ?></strong></p>
                     </div>
                 </div>
@@ -44,6 +44,7 @@
                 <div class="col-md-6">
                     <label class="form-label fw-bold small text-muted">Level Risiko</label>
                     <select class="form-select" name="level_temuan" required>
+                        <option value="Observasi" <?= ($temuan['level_temuan'] == 'Observasi') ? 'selected' : ''; ?>>Observasi</option>
                         <option value="Rendah" <?= ($temuan['level_temuan'] == 'Rendah') ? 'selected' : ''; ?>>Rendah</option>
                         <option value="Menengah" <?= ($temuan['level_temuan'] == 'Menengah') ? 'selected' : ''; ?>>Menengah</option>
                         <option value="Tinggi" <?= ($temuan['level_temuan'] == 'Tinggi') ? 'selected' : ''; ?>>Tinggi</option>
@@ -56,7 +57,7 @@
                 </div>
 
                 <div class="col-md-12">
-                    <label class="form-label fw-bold small text-muted">Uraian / Detail Temuan</label>
+                    <label class="form-label fw-bold small text-muted">Uraian Temuan</label>
                     <textarea class="form-control" name="uraian_temuan" rows="4" required><?= esc($temuan['uraian_temuan']); ?></textarea>
                 </div>
 

@@ -46,7 +46,7 @@
                     </div>
                     <div>
                         <h6 class="fw-bold mb-1">Perlu Revisi Auditor</h6>
-                        <p class="mb-0 small">Lead Auditor meminta revisi: <strong><?= $temuan['catatan_revisi']; ?></strong></p>
+                        <p class="mb-0 small"><?= ($auditor_role_id ?? null) == 6 ? 'Admin Auditor' : 'Lead Auditor'; ?> meminta revisi: <strong><?= $temuan['catatan_revisi']; ?></strong></p>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                 <hr class="my-4 op-10">
 
                 <div class="mb-4">
-                    <label class="fw-bold text-uppercase small text-muted mb-2">Uraian / Detail Temuan</label>
+                    <label class="fw-bold text-uppercase small text-muted mb-2">Uraian Temuan</label>
                     <div class="bg-light p-3 rounded-3 border-start border-4 border-primary">
                         <?= nl2br($temuan['uraian_temuan']); ?>
                     </div>
@@ -113,25 +113,63 @@
                     <div class="text-danger small fw-bold"><i class="bi bi-clock"></i> Deadline: <?= date('d M Y', strtotime($temuan['deadline'])); ?></div>
                 </div>
 
-                <!-- Tanda Tangan Section -->
+                <!-- Tanda Tangan Section (Admin Auditor | Lead Auditor | Auditee) -->
                 <div class="row mt-5 border-top pt-4">
-                    <div class="col-6 text-center">
-                        <label class="fw-bold text-uppercase small text-muted mb-3 d-block">Auditor</label>
-                        <?php if ($auditor_signature): ?>
-                            <img src="<?= $auditor_signature ?>" alt="Signature" style="max-height: 80px; width: auto;" class="mb-2">
+                    <!-- Admin Auditor Column -->
+                    <div class="col-4 text-center">
+                        <label class="fw-bold text-uppercase small text-muted mb-3 d-block">Admin Auditor</label>
+                        <?php if ($admin_signature): ?>
+                            <img src="<?= $admin_signature ?>" alt="Signature" style="max-height: 80px; width: auto;" class="mb-2">
                         <?php else: ?>
-                            <div class="py-4 border rounded bg-light text-muted small">Belum Tanda Tangan</div>
+                            <div class="py-4 border rounded bg-light text-muted small">
+                                <?php 
+                                    if ($temuan['status_progress'] == 'Waiting Admin Approval') {
+                                        echo 'Menunggu Persetujuan';
+                                    } else {
+                                        echo 'Tidak Diperlukan';
+                                    }
+                                ?>
+                            </div>
                         <?php endif; ?>
-                        <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%"><?= $auditor_name ?></div>
+                        <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%">Admin Auditor</div>
                     </div>
-                    <div class="col-6 text-center">
+
+                    <!-- Lead Auditor Column -->
+                    <div class="col-4 text-center">
                         <label class="fw-bold text-uppercase small text-muted mb-3 d-block">Lead Auditor</label>
                         <?php if ($lead_signature): ?>
                             <img src="<?= $lead_signature ?>" alt="Signature" style="max-height: 80px; width: auto;" class="mb-2">
                         <?php else: ?>
-                            <div class="py-4 border rounded bg-light text-muted small">Menunggu Persetujuan</div>
+                            <div class="py-4 border rounded bg-light text-muted small">
+                                <?php 
+                                    if ($temuan['status_progress'] == 'Menunggu Persetujuan Lead Auditor') {
+                                        echo 'Menunggu Persetujuan';
+                                    } else {
+                                        echo 'Tidak Diperlukan';
+                                    }
+                                ?>
+                            </div>
                         <?php endif; ?>
                         <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%">Lead Auditor</div>
+                    </div>
+
+                    <!-- Auditee Column -->
+                    <div class="col-4 text-center">
+                        <label class="fw-bold text-uppercase small text-muted mb-3 d-block">Auditee</label>
+                        <?php if ($auditee_signature): ?>
+                            <img src="<?= $auditee_signature ?>" alt="Signature" style="max-height: 80px; width: auto;" class="mb-2">
+                        <?php else: ?>
+                            <div class="py-4 border rounded bg-light text-muted small">
+                                <?php 
+                                    if ($temuan['status_progress'] == 'Sedang Berjalan') {
+                                        echo 'Menunggu Bukti';
+                                    } else {
+                                        echo 'Tidak Diperlukan';
+                                    }
+                                ?>
+                            </div>
+                        <?php endif; ?>
+                        <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%"><?= $pic_name ?></div>
                     </div>
                 </div>
             </div>
@@ -144,7 +182,7 @@
                 <h6 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2"></i> Status Tindak Lanjut</h6>
             </div>
             <div class="card-body p-4">
-                <?php if ($temuan['status_progress'] == 'Waiting Lead Auditor Approval') : ?>
+                <?php if ($temuan['status_progress'] == 'Menunggu Persetujuan Lead Auditor') : ?>
                     <div class="text-center py-5">
                         <div class="mb-3">
                             <i class="bi bi-hourglass-split display-1 text-muted opacity-25"></i>
@@ -207,10 +245,10 @@
                         </div>
                     </div>
 
-                    <?php if (session()->get('role_id') == 1 && $tindak_lanjut['status_verifikasi'] == 'pending') : ?>
+                    <?php if (session()->get('role_id') == 6 && $tindak_lanjut['status_verifikasi'] == 'pending') : ?>
                         <hr class="my-4">
                         <div class="p-4 rounded-4 border-2 border border-warning bg-warning bg-opacity-10">
-                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-pencil-fill me-2"></i> Verifikasi Auditor</h6>
+                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-pencil-fill me-2"></i> Verifikasi Lead Auditor</h6>
                             <form action="/temuan/verify" method="post">
                                 <?= csrf_field(); ?>
                                 <input type="hidden" name="temuan_id" value="<?= $temuan['id']; ?>">
@@ -220,8 +258,8 @@
                                     <label class="form-label small fw-bold">Ambil Keputusan</label>
                                     <select name="keputusan" class="form-select shadow-none border-2" required>
                                         <option value="" selected disabled>-- Pilih Status Verifikasi --</option>
-                                        <option value="approve">Setujui (Approve / Closed)</option>
-                                        <option value="reject">Tolak (Revision Required)</option>
+                                        <option value="approve">Setujui (Close Temuan)</option>
+                                        <option value="reject">Tolak (Kembali ke Auditee)</option>
                                     </select>
                                 </div>
 
@@ -241,6 +279,12 @@
                                 <?= ($tindak_lanjut['status_verifikasi'] == 'approved') ? '<i class="bi bi-check-circle-fill"></i> TERVERIFIKASI' : '<i class="bi bi-arrow-repeat"></i> SEDANG DIREVISI'; ?>
                             </div>
                             <div class="small fw-normal mb-3"><?= esc($tindak_lanjut['catatan_auditor']); ?></div>
+
+                            <?php if ($temuan['status_progress'] !== 'Selesai' && $tindak_lanjut['status_verifikasi'] == 'approved') : ?>
+                                <div class="badge bg-primary text-wrap mt-2 p-2 px-3 rounded-pill">
+                                    <i class="bi bi-info-circle me-1"></i> Menunggu Tanda Tangan Laporan Final (Management)
+                                </div>
+                            <?php endif; ?>
 
                             <?php if (session()->get('role_id') == 2 && session()->get('id') == $temuan['pic_id'] && $tindak_lanjut['status_verifikasi'] == 'revision_required') : ?>
                                 <hr>

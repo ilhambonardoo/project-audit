@@ -22,7 +22,7 @@ class TemuanModel extends Model
     public function getTemuanOverdue()
     {
         return $this->where('deadline <', date('Y-m-d'))
-                    ->where('status_progress !=', 'closed')
+                    ->where('status_progress !=', 'Selesai')
                     ->findAll();
     }
 }

@@ -68,7 +68,7 @@
                     <div class="mb-4">
                         <label class="form-label fw-bold small text-muted">Tanggapan / Keterangan Perbaikan <span class="text-danger">*</span></label>
                         <textarea class="form-control bg-light border-0 shadow-none" name="tanggapan_auditee" rows="5" placeholder="Jelaskan tindakan perbaikan yang telah dilakukan oleh divisi Anda..." required><?= old('tanggapan_auditee'); ?></textarea>
-                        <div class="form-text small">Jelaskan secara rinci tindakan *corrective* yang sudah diambil.</div>
+                        <div class="form-text small">Jelaskan secara rinci tindakan perbaikan yang sudah diambil.</div>
                     </div>
 
                     <div class="mb-5">

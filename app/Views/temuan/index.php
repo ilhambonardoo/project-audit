@@ -55,6 +55,7 @@
                                 if ($row['level_temuan'] == 'Tinggi') $risk_badge = 'bg-danger';
                                 elseif ($row['level_temuan'] == 'Menengah') $risk_badge = 'bg-warning text-dark';
                                 elseif ($row['level_temuan'] == 'Rendah') $risk_badge = 'bg-success';
+                                elseif ($row['level_temuan'] == 'Observasi') $risk_badge = 'bg-info text-dark';
                             ?>
                             <tr>
                                 <td class="px-4 text-center"><?= $no++; ?></td>
@@ -66,7 +67,7 @@
                                 </td>
                                 <td><?= $row['judul_temuan']; ?></td>
                                 <td>
-                                    <?= isset($row['pic_name']) ? esc($row['pic_name']) : 'Unknown'; ?>
+                                    <?= isset($row['pic_name']) ? esc($row['pic_name']) : 'Tidak Diketahui'; ?>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge <?= $risk_badge; ?> rounded-pill px-3">
@@ -76,7 +77,11 @@
                                 <td class="text-center">
                                     <?php if ($row['status_progress'] == 'Draft') : ?>
                                         <span class="badge bg-secondary px-3 rounded-pill">
-                                            Revision Required
+                                            Perlu Revisi
+                                        </span>
+                                    <?php elseif (in_array($row['status_progress'], ['Menunggu Persetujuan Lead Auditor', 'Waiting Admin Approval'])) : ?>
+                                        <span class="badge bg-warning text-dark px-3 rounded-pill">
+                                            <i class="bi bi-exclamation-circle me-1"></i> Perlu Review
                                         </span>
                                     <?php else : ?>
                                         <span class="badge bg-outline-primary border border-primary text-primary px-3 rounded-pill">
@@ -87,7 +92,7 @@
                                 <td class="text-center">
                                     <span class="badge <?= ($diff < 0) ? 'bg-danger' : 'bg-light text-dark'; ?> border">
                                         <?= date('d M Y', $deadline_date); ?>
-                                        <?= ($diff < 0) ? ' (Overdue!)' : ''; ?>
+                                        <?= ($diff < 0) ? ' (Terlambat!)' : ''; ?>
                                     </span>
                                 </td>
                                 <td class="text-center">
@@ -99,7 +104,7 @@
                                         <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Revisi</a>
                                     <?php endif; ?>
 
-                                    <?php if (session()->get('role_id') == 1 && $row['status_progress'] != 'Draft') : ?>
+                                    <?php if (in_array(session()->get('role_id'), [1, 6]) && $row['status_progress'] != 'Draft') : ?>
                                         <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Edit</a>
                                         <button class="btn btn-sm btn-outline-danger btn-hapus-temuan" 
                                                 data-id="<?= $row['id'] ?>" 

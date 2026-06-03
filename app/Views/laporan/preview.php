@@ -3,12 +3,16 @@
 <?= $this->section('content') ?>
 <div class="container-fluid mt-5 mb-5 px-5">
     <div class="row">
-        <div class="col-12 px-4 text-end mb-3">
-             <a href="<?= base_url('laporan/exportPdf/' . $pic['pic_id']) ?>" class="btn btn-danger" target="_blank">
-                <i class="bi bi-file-earmark-pdf"></i> Export PDF
+        <div class="col-12 px-4 text-end mb-3 d-flex align-items-center justify-content-end gap-2">
+            <div class="d-inline-flex align-items-center me-2">
+                <label for="inputNoUrut" class="me-2 mb-0 small fw-bold text-secondary">No. Urut:</label>
+                <input type="number" id="inputNoUrut" class="form-control form-control-sm" style="width: 80px;" value="5" min="1">
+            </div>
+            <a href="#" onclick="exportPdfWithNoUrut(<?= $pic['pic_id'] ?>)" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf"></i> Ekspor PDF
             </a>
             <a href="<?= base_url('laporan/exportWord/' . $pic['pic_id']) ?>" class="btn btn-warning">
-                <i class="bi bi-file-earmark-word"></i> Export Word
+                <i class="bi bi-file-earmark-word"></i> Ekspor Word
             </a>
         </div>
         <div class="col-12">
@@ -56,10 +60,10 @@
                                     </td>
                                     <td class="text-center small">
                                         <div class="fw-bold mb-1"><?= esc((string)$t['level_temuan']) ?></div>
-                                        <?php if (trim(strtolower((string)$t['status_progress'])) === 'closed') : ?>
-                                            <span class="badge bg-info text-dark border border-dark rounded-0 px-2">CLOSED</span>
+                                        <?php if (in_array(trim(strtolower((string)$t['status_progress'])), ['selesai', 'closed'])) : ?>
+                                            <span class="badge bg-info text-dark border border-dark rounded-0 px-2">SELESAI</span>
                                         <?php else : ?>
-                                            <span class="badge bg-warning text-dark border border-dark rounded-0 px-2">OPEN</span>
+                                            <span class="badge bg-warning text-dark border border-dark rounded-0 px-2">BUKA</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center small"><?= esc((string)$t['deadline']) ?></td>
@@ -82,37 +86,37 @@
 <div class="container-fluid px-5 signature-section-web mt-4 mb-5">
     <div class="row text-center">
         <div class="col-4">
-            <p class="fw-bold mb-1">Mengetahui:</p>
+            <p class="fw-bold mb-1">Dibuat Oleh:</p>
             <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
-                <?php if (!empty($pic['dept_head_signature'])) : ?>
-                    <img src="<?= $pic['dept_head_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php if (!empty($pic['ass_head_signature'])) : ?>
+                    <img src="<?= $pic['ass_head_signature'] ?>" style="max-height: 80px; max-width: 150px;">
                 <?php else: ?>
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">(Ass. Head Corp Finance Controller)</p>
+            <p class="fw-bold mb-0">(Ass Head Corp Internal Audit)</p>
         </div>
         <div class="col-4">
             <p class="fw-bold mb-1">Diperiksa Oleh:</p>
             <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
-                <?php if (!empty($pic['director_signature'])) : ?>
-                    <img src="<?= $pic['director_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php if (!empty($pic['cfo_signature'])) : ?>
+                    <img src="<?= $pic['cfo_signature'] ?>" style="max-height: 80px; max-width: 150px;">
                 <?php else: ?>
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">(Chief Financial Officer)</p>
+            <p class="fw-bold mb-0">(CFO)</p>
         </div>
         <div class="col-4">
             <p class="fw-bold mb-1">Disetujui Oleh:</p>
             <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
-                <?php if (!empty($pic['plant_manager_signature'])) : ?>
-                    <img src="<?= $pic['plant_manager_signature'] ?>" style="max-height: 80px; max-width: 150px;">
+                <?php if (!empty($pic['direktur_signature'])) : ?>
+                    <img src="<?= $pic['direktur_signature'] ?>" style="max-height: 80px; max-width: 150px;">
                 <?php else: ?>
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">(Plant Manager)</p>
+            <p class="fw-bold mb-0">(Direktur)</p>
         </div>
     </div>
 </div>
@@ -147,5 +151,12 @@
         margin-bottom: 5px;
     }
 </style>
+
+<script>
+function exportPdfWithNoUrut(picId) {
+    var noUrut = document.getElementById('inputNoUrut').value || 5;
+    window.open('<?= base_url('laporan/exportPdf/') ?>' + picId + '?no_urut=' + noUrut, '_blank');
+}
+</script>
 <?= $this->endSection() ?>
 
