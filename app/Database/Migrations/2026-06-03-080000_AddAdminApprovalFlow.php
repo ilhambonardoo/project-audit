@@ -21,7 +21,7 @@ class AddAdminApprovalFlow extends Migration
             'Waiting CFO Approval',
             'Waiting Direktur Approval',
             'Selesai'
-        ) DEFAULT 'Draft'");
+        ) NOT NULL DEFAULT 'Draft'");
     }
 
     public function down()

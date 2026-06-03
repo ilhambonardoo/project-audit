@@ -79,6 +79,10 @@
                                         <span class="badge bg-secondary px-3 rounded-pill">
                                             Perlu Revisi
                                         </span>
+                                    <?php elseif (in_array($row['status_progress'], ['Menunggu Persetujuan Lead Auditor', 'Waiting Admin Approval'])) : ?>
+                                        <span class="badge bg-warning text-dark px-3 rounded-pill">
+                                            <i class="bi bi-exclamation-circle me-1"></i> Perlu Review
+                                        </span>
                                     <?php else : ?>
                                         <span class="badge bg-outline-primary border border-primary text-primary px-3 rounded-pill">
                                             <?= $row['status_progress']; ?>

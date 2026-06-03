@@ -26,7 +26,7 @@
                         <i class="bi bi-exclamation-triangle-fill fs-3"></i>
                     </div>
                     <div>
-                        <h6 class="fw-bold mb-1">Catatan Revisi Lead Auditor</h6>
+                        <h6 class="fw-bold mb-1">Catatan Revisi <?= ($auditor_role_id ?? null) == 6 ? 'Admin Auditor' : 'Lead Auditor'; ?></h6>
                         <p class="mb-0 small"><strong><?= $temuan['catatan_revisi']; ?></strong></p>
                     </div>
                 </div>

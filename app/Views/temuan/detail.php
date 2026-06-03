@@ -46,7 +46,7 @@
                     </div>
                     <div>
                         <h6 class="fw-bold mb-1">Perlu Revisi Auditor</h6>
-                        <p class="mb-0 small">Lead Auditor meminta revisi: <strong><?= $temuan['catatan_revisi']; ?></strong></p>
+                        <p class="mb-0 small"><?= ($auditor_role_id ?? null) == 6 ? 'Admin Auditor' : 'Lead Auditor'; ?> meminta revisi: <strong><?= $temuan['catatan_revisi']; ?></strong></p>
                     </div>
                 </div>
             </div>

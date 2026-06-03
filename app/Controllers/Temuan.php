@@ -281,10 +281,17 @@ public function show($id)
         $userModel = new \App\Models\UserModel();
         $users = $userModel->where('role_id', 2)->findAll();
 
+        $auditor = $userModel->find($temuan['auditor_id']);
+        $auditorRoleId = null;
+        if ($auditor) {
+            $auditorRoleId = is_array($auditor) ? ($auditor['role_id'] ?? null) : ($auditor->role_id ?? null);
+        }
+
         $data = [
-            'title'  => 'Edit Temuan Audit',
-            'temuan' => $temuan,
-            'users'  => $users
+            'title'           => 'Edit Temuan Audit',
+            'temuan'          => $temuan,
+            'users'           => $users,
+            'auditor_role_id' => $auditorRoleId
         ];
 
         return view('temuan/edit', $data);
@@ -309,11 +316,28 @@ public function show($id)
             'kategori_status' => $this->request->getPost('kategori_status'),
         ];
 
-        // Jika status saat ini adalah Draft (hasil reject Lead Auditor), 
-        // maka setelah diupdate, status kembali ke Menunggu Persetujuan Lead Auditor
+        // Jika status saat ini adalah Draft (hasil reject), 
+        // maka setelah diupdate, status kembali ke approval level yang sesuai:
+        // - Jika pembuat/auditor temuan adalah Lead Auditor (role 6), maka kembali ke 'Waiting Admin Approval' (agar divalidasi oleh Admin Auditor)
+        // - Jika pembuat/auditor temuan adalah Admin Auditor (role 1) / lainnya, maka kembali ke 'Menunggu Persetujuan Lead Auditor'
         // dan bubuhkan tanda tangan baru
         if ($temuan['status_progress'] === 'Draft') {
-            $updateData['status_progress'] = 'Menunggu Persetujuan Lead Auditor';
+            $roleId = session()->get('role_id');
+            $auditorRoleId = null;
+            if (!empty($temuan['auditor_id'])) {
+                $userModel = new \App\Models\UserModel();
+                $auditor = $userModel->find($temuan['auditor_id']);
+                if ($auditor) {
+                    $auditorRoleId = is_array($auditor) ? ($auditor['role_id'] ?? null) : ($auditor->role_id ?? null);
+                }
+            }
+            $targetRole = $auditorRoleId ?: $roleId;
+
+            if ($targetRole == 6) {
+                $updateData['status_progress'] = 'Waiting Admin Approval';
+            } else {
+                $updateData['status_progress'] = 'Menunggu Persetujuan Lead Auditor';
+            }
             $updateData['auditor_signature_snapshot'] = session()->get('signature');
         }
 
