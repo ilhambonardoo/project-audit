@@ -187,16 +187,14 @@ if (file_exists($logo_path)) {
     <table class="table">
         <thead>
             <tr class="text-center bg-light">
-                <th width="20">No.</th>
+                <th width="25">No.</th>
                 <th width="45">Klausul</th>
-                <th width="70">PIC</th>
-                <th width="80">Kategori & Status Temuan</th>
-                <th>Uraian Temuan</th>
-                <th>Rekomendasi</th>
-                <th width="80">Tanggapan Auditee</th>
-                <th width="50">Level Temuan</th>
-                <th width="55">Target Waktu</th>
-                <th width="80">Kriteria</th>
+                <th width="65">PIC</th>
+                <th width="65">Kategori & Status Temuan</th>
+                <th width="150">Uraian Temuan</th> <th width="150">Rekomendasi</th>  <th width="75">Tanggapan Auditee</th>
+                <th width="45">Level Temuan</th>
+                <th width="50">Target Waktu</th>
+                <th width="70">Kriteria</th>
             </tr>
         </thead>
         <tbody>
