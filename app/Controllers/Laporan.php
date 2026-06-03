@@ -85,7 +85,7 @@ class Laporan extends BaseController
         $section = $phpWord->addSection(['orientation' => 'landscape']);
 
         // Title
-        $section->addText("PEMBAHASAN TEMUAN PT KENCANA ABADI JAYA", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
+        $section->addText("PEMBAHASAN TEMUAN PT SMI", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
         $section->addTextBreak(1);
 
         // Table Styles

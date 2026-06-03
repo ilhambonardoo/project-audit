@@ -181,7 +181,7 @@ if (file_exists($logo_path)) {
 
 
     <div class="header">
-        <h3 class="fw-bold text-uppercase">PEMBAHASAN TEMUAN PT KENCANA ABADI JAYA</h3>
+        <h3 class="fw-bold text-uppercase">PEMBAHASAN TEMUAN PT SMI - <?= $nama_departemen?></h3>
     </div>
 
     <table class="table">
@@ -252,7 +252,7 @@ if (file_exists($logo_path)) {
                         <img src="<?= $pic['cfo_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">(CFO)</p>
+                <p class="fw-bold">(Chief Financial Officer)</p>
             </div>
             <div class="signature-box">
                 <p class="fw-bold">Disetujui oleh:</p>

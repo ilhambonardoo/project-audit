@@ -19,7 +19,10 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div class="text-center py-4">
-                        <h5 class="fw-bold text-uppercase mb-0">PEMBAHASAN TEMUAN PT KENCANA ABADI JAYA</h5>
+                        <?php
+                            $nama_departemen = isset($pic['department']) ? strtoupper(esc((string)$pic['department'])) : '';
+                        ?>
+                        <h5 class="fw-bold text-uppercase mb-0">PEMBAHASAN TEMUAN PT SMI - <?= $nama_departemen ?></h5>
                     </div>
 
                     <div class="table-responsive">
@@ -105,7 +108,7 @@
                    <div class="text-muted opacity-25 italic small">Belum Tanda Tangan</div>
                 <?php endif; ?>
             </div>
-            <p class="fw-bold mb-0">(CFO)</p>
+            <p class="fw-bold mb-0">(Chief Financial Officer)</p>
         </div>
         <div class="col-4">
             <p class="fw-bold mb-1">Disetujui Oleh:</p>

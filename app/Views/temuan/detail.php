@@ -131,7 +131,6 @@
                                 ?>
                             </div>
                         <?php endif; ?>
-                        <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%">Admin Auditor</div>
                     </div>
 
                     <!-- Lead Auditor Column -->
@@ -150,7 +149,6 @@
                                 ?>
                             </div>
                         <?php endif; ?>
-                        <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%">Lead Auditor</div>
                     </div>
 
                     <!-- Auditee Column -->
@@ -169,7 +167,6 @@
                                 ?>
                             </div>
                         <?php endif; ?>
-                        <div class="fw-bold text-dark mt-2 border-top pt-2 mx-auto" style="width: 80%"><?= $pic_name ?></div>
                     </div>
                 </div>
             </div>
