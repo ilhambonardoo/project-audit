@@ -100,7 +100,7 @@
                                         <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Revisi</a>
                                     <?php endif; ?>
 
-                                    <?php if (session()->get('role_id') == 1 && $row['status_progress'] != 'Draft') : ?>
+                                    <?php if (in_array(session()->get('role_id'), [1, 6]) && $row['status_progress'] != 'Draft') : ?>
                                         <a href="/temuan/edit/<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Edit</a>
                                         <button class="btn btn-sm btn-outline-danger btn-hapus-temuan" 
                                                 data-id="<?= $row['id'] ?>" 

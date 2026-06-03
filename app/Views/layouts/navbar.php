@@ -20,7 +20,7 @@
 
         <?php $role_id = session()->get('role_id'); ?>
 
-        <?php if ($role_id == 1) : ?>
+        <?php if (in_array($role_id, [1, 6])) : ?>
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= (url_is('temuan*')) ? 'active' : '' ?>" href="/temuan">
                 <i class="bi bi-clipboard-check"></i>
@@ -38,7 +38,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if (in_array($role_id, [3, 4, 5, 6])) : ?>
+        <?php if (in_array($role_id, [1, 3, 4, 5, 6])) : ?>
             <li class="nav-item">
               <a class="nav-link nav-item-modern <?= url_is('/approval') ? "active" : "" ?>" href="/approval">
                 <i class="bi bi-check-circle"></i>

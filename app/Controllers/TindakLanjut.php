@@ -49,6 +49,11 @@ class TindakLanjut extends BaseController
 
     public function store()
     {
+        // Check if auditee has signature
+        if (session()->get('role_id') == 2 && empty(session()->get('signature'))) {
+            return redirect()->back()->with('error', 'Anda harus membuat tanda tangan digital terlebih dahulu sebelum mengunggah bukti temuan. Silakan buat tanda tangan di menu Profil.');
+        }
+
         $fileBukti = $this->request->getFile('file_bukti');
         
         if ($fileBukti && $fileBukti->getError() !== UPLOAD_ERR_OK) {
@@ -126,6 +131,16 @@ class TindakLanjut extends BaseController
                 ]);
                 $tindakLanjutId = $this->tindakLanjutModel->insertID();
             }
+
+            // Simpan tanda tangan auditee ke tabel approvals (sebagai bukti pengiriman tindak lanjut)
+            $db->table('approvals')->replace([
+                'temuan_id'         => $temuan_id,
+                'approver_id'       => session()->get('id'),
+                'level_urut'        => session()->get('role_id'),
+                'status'            => 'submitted',
+                'signature_snapshot'=> session()->get('signature'),
+                'created_at'        => date('Y-m-d H:i:s')
+            ]);
 
             $this->temuanModel->update($temuan_id, [
                 'status_progress' => 'Sedang Berjalan'

@@ -29,17 +29,20 @@ class Approval extends BaseController
         $statusFilter = '';
 
         switch ($roleId) {
+            case 1: // Admin Auditor
+                $statusFilter = 'Waiting Admin Approval'; // Approval dari Lead Auditor yang buat temuan
+                break;
             case 6: // Lead Auditor
                 $statusFilter = 'Menunggu Persetujuan Lead Auditor';
                 break;
-            case 3: // Kadep
-                $statusFilter = 'Menunggu Persetujuan Kadep';
+            case 3: // Ass Head Corp Internal Audit
+                $statusFilter = 'Closed'; // Laporan Final dimulai setelah Closed
                 break;
-            case 5: // Direktur / CFO
-                $statusFilter = 'Menunggu Persetujuan Direktur';
+            case 5: // CFO
+                $statusFilter = 'Closed';
                 break;
-            case 4: // Plant Manager
-                $statusFilter = 'Menunggu Persetujuan Manager';
+            case 4: // Direktur
+                $statusFilter = 'Closed';
                 break;
             default:
                 return redirect()->back()->with('error', 'Akses Ditolak.');
@@ -50,11 +53,10 @@ class Approval extends BaseController
             ->join('users', 'users.id = temuan.pic_id')
             ->where('status_progress', $statusFilter);
 
-        // Filter berdasarkan departemen jika role adalah Kadep (Role 3)
-        if ($roleId == 3) {
-            $builder->where('users.department', $userDept);
-        }
-
+        // Top 3 tier roles can see all departments
+        // Role 3 (Ass Head), 5 (CFO), 4 (Direktur) do not have department filter anymore
+        // Previously Role 3 had department filter.
+        
         $data = [
             'title'  => 'Daftar Persetujuan (Approval)',
             'temuan' => $builder->findAll()
@@ -91,15 +93,18 @@ class Approval extends BaseController
         
         try {
             if ($decision === 'Tolak') {
-                if ($roleId == 6) {
+                if ($roleId == 1) {
+                    $nextStatus = 'Draft';
+                    $actionLog = "Ditolak oleh Admin Auditor - Auditor harus revisi. Alasan: " . $notes;
+                } else if ($roleId == 6) {
                     $nextStatus = 'Draft';
                     $actionLog = "Ditolak oleh Lead Auditor - Auditor harus revisi. Alasan: " . $notes;
                 } else if ($roleId == 3) {
-                    $nextStatus = 'Buka';
-                    $actionLog  = "Ditolak oleh Kadep - Kembali ke Status Buka. Alasan: " . $notes;
-                } else {
                     $nextStatus = 'Sedang Berjalan';
-                    $actionLog  = "Ditolak oleh Role " . $roleId . " - Alasan: " . $notes;
+                    $actionLog  = "Ditolak oleh Ass Head Corp IA - Kembali ke Auditee. Alasan: " . $notes;
+                } else {
+                    $nextStatus = 'Closed';
+                    $actionLog  = "Ditolak oleh Role " . $roleId . " - Kembali ke status Closed. Alasan: " . $notes;
                 }
 
                 $updateData = [
@@ -107,7 +112,7 @@ class Approval extends BaseController
                     'catatan_revisi'  => $notes
                 ];
 
-                if ($roleId == 6) {
+                if (in_array($roleId, [1, 6])) {
                     $updateData['auditor_signature_snapshot'] = null;
                 }
 
@@ -124,24 +129,29 @@ class Approval extends BaseController
                 }
             } else if ($decision === 'Setujui') {
                 switch ($roleId) {
+                    case 1: // Admin Auditor approves Lead Auditor's temuan
+                        $nextStatus = 'Sedang Berjalan';
+                        $actionLog  = "Disetujui oleh Admin Auditor - Siap untuk Auditee";
+                        $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus, 'catatan_revisi' => null]);
+                        break;
                     case 6:
-                        $nextStatus = 'Buka';
+                        $nextStatus = 'Sedang Berjalan';
                         $actionLog  = "Disetujui oleh Lead Auditor - Siap untuk Auditee";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus, 'catatan_revisi' => null]);
                         break;
                     case 3:
-                        $nextStatus = 'Menunggu Persetujuan Direktur';
-                        $actionLog  = "Disetujui oleh Kepala Departemen";
+                        $nextStatus = 'Selesai';
+                        $actionLog  = "Disetujui oleh Ass Head Corp IA - Lanjut ke CFO";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                     case 5:
-                        $nextStatus = 'Menunggu Persetujuan Manager';
-                        $actionLog  = "Disetujui oleh Direktur / CFO";
+                        $nextStatus = 'Selesai';
+                        $actionLog  = "Disetujui oleh CFO - Lanjut ke Direktur";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                     case 4:
                         $nextStatus = 'Selesai';
-                        $actionLog  = "Disetujui oleh Plant Manager (Selesai)";
+                        $actionLog  = "Disetujui oleh Direktur (Selesai)";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                 }

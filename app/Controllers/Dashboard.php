@@ -24,7 +24,9 @@ class Dashboard extends BaseController
 
         $builder = $this->temuanModel->builder();
 
-        if(!in_array($role_id, [1, 6])){
+        // Top 3 tier roles (3, 4, 5) and Auditors (1, 6) can see all departments.
+        // Role 3 (Ass Head), 4 (Direktur), 5 (CFO) no longer filtered by department.
+        if(!in_array($role_id, [1, 3, 4, 5, 6])){
             $builder->select('temuan.*')->join('users', 'users.id = temuan.pic_id')->where('users.department', $department);
         }
 
@@ -39,34 +41,35 @@ class Dashboard extends BaseController
 
         // ini buat hitung statistik menggunakan builder yang sudah di filter
         $total = $this->getFilteredBuilder()->countAllResults();
-        $open = $this->getFilteredBuilder()->where('status_progress', 'Buka')->countAllResults();
-        $closed = $this->getFilteredBuilder()->where('status_progress', 'Selesai')->countAllResults();
+        $open = $this->getFilteredBuilder()->where('status_progress', 'Sedang Berjalan')->countAllResults();
+        $closed = $this->getFilteredBuilder()->where('status_progress', 'Closed')->countAllResults();
 
         $proses = $this->getFilteredBuilder()->groupStart()
                     ->where('status_progress', 'Sedang Berjalan')
+                    ->orLike('status_progress', 'Waiting', 'after')
                     ->orLike('status_progress', 'Menunggu', 'after')
                     ->groupEnd()->countAllResults();
 
         // Data chart (overdue atau on time)
         $on_time_count = $this->getFilteredBuilder()
-            ->where('status_progress', 'Selesai')
+            ->where('status_progress', 'Closed')
             ->where('temuan.updated_at <= temuan.deadline')
             ->countAllResults();
 
         $overdue_count_closed = $this->getFilteredBuilder()
-            ->where('status_progress', 'Selesai')
+            ->where('status_progress', 'Closed')
             ->where('temuan.updated_at > temuan.deadline')
             ->countAllResults();
 
         $early_warning = $this->getFilteredBuilder()
-            ->where('status_progress !=', 'Selesai')
+            ->where('status_progress !=', 'Closed')
             ->orderBy('deadline', 'ASC')
             ->limit(5)
             ->get()
             ->getResultArray();
 
         $overdue_alert_count = $this->getFilteredBuilder()
-            ->where('status_progress !=', 'Selesai')
+            ->where('status_progress !=', 'Closed')
             ->where('deadline <', $today)
             ->countAllResults();
 

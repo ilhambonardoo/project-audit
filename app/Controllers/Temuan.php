@@ -37,8 +37,9 @@ class Temuan extends BaseController
             ->orderBy('temuan.created_at', 'DESC');
 
         // Filter based on role
-        if (!in_array($role_id, [1, 6])) {
-            // Non-auditor roles (PIC, Kadep, PM, CFO) only see findings for their department
+        // Auditor (1, 6) and Top 3 Tier (3, 4, 5) can see all findings.
+        if (!in_array($role_id, [1, 3, 4, 5, 6])) {
+            // PIC (Auditee) only see findings for their department
             $query->where('users.department', $department);
         }
 
@@ -82,6 +83,12 @@ class Temuan extends BaseController
 
         $deadline = date('Y-m-d', strtotime('+30 days'));
 
+        // Determine initial status based on role
+        // Lead Auditor (6) create → Waiting Admin Approval
+        // Admin (1) create → Menunggu Persetujuan Lead Auditor
+        $roleId = session()->get('role_id');
+        $initialStatus = ($roleId == 6) ? 'Waiting Admin Approval' : 'Menunggu Persetujuan Lead Auditor';
+
         $this->temuanModel->save([
             'auditor_id'      => session()->get('id'),
             'pic_id'          => $this->request->getPost('pic_id'),
@@ -92,7 +99,7 @@ class Temuan extends BaseController
             'rekomendasi'     => $this->request->getPost('rekomendasi'),
             'kategori_status' => $this->request->getPost('kategori_status'),
             'level_temuan'    => $this->request->getPost('level_temuan'),
-            'status_progress' => 'Menunggu Persetujuan Lead Auditor',
+            'status_progress' => $initialStatus,
             'deadline'        => $deadline,
             'auditor_signature_snapshot' => session()->get('signature'),
         ]);
@@ -108,50 +115,112 @@ class Temuan extends BaseController
         return redirect()->to('/temuan')->with('success', 'Temuan audit berhasil ditambahkan dan deadline 30 hari telah ditetapkan.');
     }
 
-    public function show($id)
-    {
-        $temuan = $this->temuanModel->find($id);
-        if (!$temuan) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Temuan dengan ID $id tidak ditemukan.");
-        }
-
-        $auditor = $this->userModel->find($temuan['auditor_id']);
-        $pic     = $this->userModel->find($temuan['pic_id']);
-
-        $tindak_lanjut = $this->tindakLanjutModel->where('temuan_id', $id)->first();
-
-        $bukti_pendukung = [];
-        if ($tindak_lanjut) {
-            $bukti_pendukung = $this->buktiModel->where('tindak_lanjut_id', $tindak_lanjut['id'])->findAll();
-        }
-
-        // Ambil tanda tangan Lead Auditor dari tabel approvals jika sudah ada
-        $approvalModel = new \App\Models\ApprovalModel();
-        $leadApproval = $approvalModel->where([
-            'temuan_id'  => $id,
-            'level_urut' => 6, // Lead Auditor
-        ])->where('signature_snapshot IS NOT NULL')
-          ->orderBy('created_at', 'DESC')
-          ->first();
-
-        $data = [
-            'title'           => 'Detail Temuan: ' . $temuan['judul_temuan'],
-            'temuan'          => $temuan,
-            'auditor_name'    => $auditor['name'] ?? 'Tidak Diketahui',
-            'pic_name'        => $pic['name'] ?? 'Pilih PIC Terlebih Dahulu',
-            'tindak_lanjut'   => $tindak_lanjut,
-            'bukti_pendukung' => $bukti_pendukung,
-            'lead_signature'  => $leadApproval['signature_snapshot'] ?? null,
-            'auditor_signature' => $temuan['auditor_signature_snapshot'] ?? ($auditor['signature'] ?? null)
-        ];
-
-        return view('temuan/detail', $data);
+public function show($id)
+{
+    $temuan = $this->temuanModel->find($id);
+    if (!$temuan) {
+        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Temuan dengan ID $id tidak ditemukan.");
     }
+
+    $auditor = $this->userModel->find($temuan['auditor_id']);
+    $pic     = $this->userModel->find($temuan['pic_id']);
+
+    $tindak_lanjut = $this->tindakLanjutModel->where('temuan_id', $id)->first();
+
+    $bukti_pendukung = [];
+    if ($tindak_lanjut) {
+        $bukti_pendukung = $this->buktiModel->where('tindak_lanjut_id', $tindak_lanjut['id'])->findAll();
+    }
+
+    // Ambil tanda tangan Lead Auditor dari tabel approvals jika sudah ada
+    $approvalModel = new \App\Models\ApprovalModel();
+    
+    $adminApproval = $approvalModel->where([
+        'temuan_id'  => $id,
+        'level_urut' => 1, // Admin Auditor
+    ])->where('signature_snapshot IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->first();
+
+    $leadApproval = $approvalModel->where([
+        'temuan_id'  => $id,
+        'level_urut' => 6, // Lead Auditor
+    ])->where('signature_snapshot IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->first();
+
+    // Ambil tanda tangan Auditee dari tabel approvals jika sudah ada
+    $auditeeApproval = $approvalModel->where([
+        'temuan_id'  => $id,
+        'level_urut' => 2, // PIC / Auditee
+    ])->where('signature_snapshot IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->first();
+
+    // Dapatkan role ID pembuat temuan
+    $auditorRoleId = null;
+    if ($auditor) {
+        if (is_array($auditor)) {
+            $auditorRoleId = $auditor['role_id'] ?? null;
+        } else {
+            $auditorRoleId = $auditor->role_id ?? null;
+        }
+    }
+    
+    // Jika masih tidak ada, query langsung ke database
+    if (!$auditorRoleId) {
+        $userDb = $this->userModel->find($temuan['auditor_id']);
+        if ($userDb) {
+            if (is_array($userDb)) {
+                $auditorRoleId = $userDb['role_id'] ?? null;
+            } else {
+                $auditorRoleId = $userDb->role_id ?? null;
+            }
+        }
+    }
+
+    // Logika signature berdasarkan siapa yang membuat:
+    // - Admin (1) membuat: Admin signature dari snapshot, Lead signature dari approval table
+    // - Lead (6) membuat: Lead signature dari snapshot, Admin signature dari approval table
+    $adminSignature = null;
+    $leadSignature = null;
+    $creatorSignature = $temuan['auditor_signature_snapshot'] ?? null;
+
+    if ($auditorRoleId == 1) {
+        // Admin yang membuat temuan
+        $adminSignature = $creatorSignature;
+        // Lead signature dari approval saat Lead approve
+        $leadSignature = $leadApproval['signature_snapshot'] ?? null;
+    } else if ($auditorRoleId == 6) {
+        // Lead Auditor yang membuat temuan
+        $leadSignature = $creatorSignature;
+        // Admin signature dari approval saat Admin approve
+        $adminSignature = $adminApproval['signature_snapshot'] ?? null;
+    }
+
+    $auditeeSignature = $auditeeApproval['signature_snapshot'] ?? null;
+
+    $data = [
+        'title'             => 'Detail Temuan: ' . $temuan['judul_temuan'],
+        'temuan'            => $temuan,
+        'auditor_name'      => is_array($auditor) ? ($auditor['name'] ?? 'Tidak Diketahui') : ($auditor->name ?? 'Tidak Diketahui'),
+        'pic_name'          => is_array($pic) ? ($pic['name'] ?? 'Pilih PIC Terlebih Dahulu') : ($pic->name ?? 'Pilih PIC Terlebih Dahulu'),
+        'tindak_lanjut'     => $tindak_lanjut,
+        'bukti_pendukung'   => $bukti_pendukung,
+        'admin_signature'   => $adminSignature,
+        'lead_signature'    => $leadSignature,
+        'auditee_signature' => $auditeeSignature,
+        'auditor_signature' => $temuan['auditor_signature_snapshot'] ?? (is_array($auditor) ? ($auditor['signature'] ?? null) : ($auditor->signature ?? null)),
+        'auditor_role_id'   => $auditorRoleId
+    ];
+
+    return view('temuan/detail', $data);
+}
 
     public function verify()
     {
-        if (session()->get('role_id') != 1) {
-            return redirect()->back()->with('error', 'Akses ditolak. Hanya Auditor yang bisa melakukan verifikasi.');
+        if (session()->get('role_id') != 6) {
+            return redirect()->back()->with('error', 'Akses ditolak. Hanya Lead Auditor yang bisa melakukan verifikasi bukti temuan.');
         }
 
         $temuan_id        = $this->request->getPost('temuan_id');
@@ -172,11 +241,11 @@ class Temuan extends BaseController
             ]);
 
             $this->temuanModel->update($temuan_id, [
-                'status_progress' => 'Menunggu Persetujuan Kadep'
+                'status_progress' => 'Closed'
             ]);
 
-            $message = 'Tindak lanjut disetujui. Sekarang menunggu persetujuan Kepala Departemen.';
-            $aksi_log = 'Setujui Bukti (Ke Kadep)';
+            $message = 'Bukti temuan disetujui. Temuan sekarang berstatus CLOSED dan masuk ke alur Tanda Tangan Laporan Final.';
+            $aksi_log = 'Setujui Bukti (Closed)';
         } else {
             $this->tindakLanjutModel->update($tindak_lanjut_id, [
                 'status_verifikasi' => 'revision_required',
@@ -187,8 +256,8 @@ class Temuan extends BaseController
                 'status_progress' => 'Sedang Berjalan'
             ]);
 
-            $message = 'Tindak lanjut ditolak. PIC akan diminta melakukan revisi.';
-            $aksi_log = 'Tolak Bukti (Minta Revisi)';
+            $message = 'Bukti temuan ditolak. PIC akan diminta melakukan revisi.';
+            $aksi_log = 'Tolak Bukti (Kembali ke Auditee)';
         }
 
         $this->AuditTrailModel->save([

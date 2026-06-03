@@ -42,11 +42,11 @@ class UserSeeder extends Seeder
                 'created_at'    => date('Y-m-d H:i:s'),
                 'updated_at'    => date('Y-m-d H:i:s'),
             ],
-            // Kadep Production
+            // Ass Head Corp Internal Audit Production
             [
-                'name'          => 'Kadep Produksi',
-                'email'         => 'kadep.produksi@audit.com',
-                'password'      => password_hash('kadep123', PASSWORD_DEFAULT),
+                'name'          => 'Ass Head Corp IA Produksi',
+                'email'         => 'asshead.produksi@audit.com',
+                'password'      => password_hash('asshead123', PASSWORD_DEFAULT),
                 'role_id'       => 3,
                 'department_id' => 1, // Produksi
                 'department'    => 'Produksi',

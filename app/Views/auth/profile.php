@@ -36,7 +36,6 @@
 
                 <hr class="my-5">
 
-                <?php if (session()->get('role_id') != 2) : // Hide for Auditee/PIC ?>
                 <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-pencil-square me-2"></i>Tanda Tangan Digital</h5>
                 
                 <div class="text-center mb-4">
@@ -57,7 +56,6 @@
                         <i class="bi bi-pen me-2"></i> Update Tanda Tangan
                     </button>
                 </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>

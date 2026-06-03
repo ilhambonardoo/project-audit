@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<?php if (session()->get('role_id') == 1) : ?>
+<?php if (session()->get('role_id') == 6) : ?>
     <div class="row mb-4">
         <?php if ($overdue_count > 0) : ?>
             <div class="col-md-6 mb-3">
