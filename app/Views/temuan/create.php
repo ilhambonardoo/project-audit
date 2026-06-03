@@ -35,7 +35,7 @@
                 </div>
                 <!-- Kriteria/SOP -->
                 <div class="col-md-6 mb-3">
-                    <label for="kriteria" class="form-label fw-semibold">SOP</label>
+                    <label for="kriteria" class="form-label fw-semibold">Kriteria</label>
                     <textarea class="form-control form-control-lg border-2 shadow-none" id="kriteria" name="kriteria" rows="1" placeholder="Tuliskan standar operasional..." required></textarea>
                 </div>
 
