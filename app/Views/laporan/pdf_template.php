@@ -111,8 +111,8 @@
                 </td>
                 <td class="text-center">
                     <div class="fw-bold"><?= esc((string)$t['level_temuan']) ?></div>
-                    <div class="badge" style="background-color: <?= (trim(strtolower((string)$t['status_progress'])) === 'selesai') ? '#0dcaf0' : '#ffc107' ?>;">
-                        <?= (trim(strtolower((string)$t['status_progress'])) === 'selesai') ? 'SELESAI' : 'BUKA' ?>
+                    <div class="badge" style="background-color: <?= in_array(trim(strtolower((string)$t['status_progress'])), ['selesai', 'closed']) ? '#0dcaf0' : '#ffc107' ?>;">
+                        <?= in_array(trim(strtolower((string)$t['status_progress'])), ['selesai', 'closed']) ? 'SELESAI' : 'BUKA' ?>
                     </div>
                 </td>
                 <td class="text-center"><?= esc((string)$t['deadline']) ?></td>
@@ -133,31 +133,31 @@
     <div class="signature-section">
         <div class="signature-wrapper">
             <div class="signature-box">
-                <p class="fw-bold">Mengetahui:</p>
+                <p class="fw-bold">Dibuat Oleh:</p>
                 <div class="signature-space">
-                    <?php if (!empty($pic['dept_head_signature'])) : ?>
-                        <img src="<?= $pic['dept_head_signature'] ?>" class="signature-img">
+                    <?php if (!empty($pic['ass_head_signature'])) : ?>
+                        <img src="<?= $pic['ass_head_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">(Ass. Head Corp Finance Controller)</p>
+                <p class="fw-bold">(Ass Head Corp Internal Audit)</p>
             </div>
             <div class="signature-box">
                 <p class="fw-bold">Diperiksa Oleh:</p>
                 <div class="signature-space">
-                    <?php if (!empty($pic['director_signature'])) : ?>
-                        <img src="<?= $pic['director_signature'] ?>" class="signature-img">
+                    <?php if (!empty($pic['cfo_signature'])) : ?>
+                        <img src="<?= $pic['cfo_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">(Chief Financial Officer)</p>
+                <p class="fw-bold">(CFO)</p>
             </div>
             <div class="signature-box">
                 <p class="fw-bold">Disetujui oleh:</p>
                 <div class="signature-space">
-                    <?php if (!empty($pic['plant_manager_signature'])) : ?>
-                        <img src="<?= $pic['plant_manager_signature'] ?>" class="signature-img">
+                    <?php if (!empty($pic['direktur_signature'])) : ?>
+                        <img src="<?= $pic['direktur_signature'] ?>" class="signature-img">
                     <?php endif; ?>
                 </div>
-                <p class="fw-bold">(Plant Manager)</p>
+                <p class="fw-bold">(Direktur)</p>
             </div>
             <div class="clear"></div>
         </div>

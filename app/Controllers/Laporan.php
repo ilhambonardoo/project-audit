@@ -110,7 +110,7 @@ class Laporan extends BaseController
         $table->addCell(1500, $headerCellStyle)->addText("Kriteria", $headerTextStyle);
 
         foreach ($temuanList as $index => $t) {
-            $status = (trim(strtolower((string)$t['status_progress'])) === 'selesai') ? 'SELESAI' : 'BUKA';
+            $status = in_array(trim(strtolower((string)$t['status_progress'])), ['selesai', 'closed']) ? 'SELESAI' : 'BUKA';
             
             $table->addRow();
             $table->addCell(400)->addText((string)($index + 1), $cellTextStyle);

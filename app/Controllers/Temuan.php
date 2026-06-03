@@ -157,6 +157,28 @@ public function show($id)
       ->orderBy('created_at', 'DESC')
       ->first();
 
+    // Ambil tanda tangan Management dari tabel approvals jika sudah ada
+    $assHeadApproval = $approvalModel->where([
+        'temuan_id'  => $id,
+        'level_urut' => 3, // Ass Head
+    ])->where('signature_snapshot IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->first();
+
+    $cfoApproval = $approvalModel->where([
+        'temuan_id'  => $id,
+        'level_urut' => 5, // CFO
+    ])->where('signature_snapshot IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->first();
+
+    $direkturApproval = $approvalModel->where([
+        'temuan_id'  => $id,
+        'level_urut' => 4, // Direktur
+    ])->where('signature_snapshot IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->first();
+
     // Dapatkan role ID pembuat temuan
     $auditorRoleId = null;
     if ($auditor) {
@@ -210,6 +232,9 @@ public function show($id)
         'admin_signature'   => $adminSignature,
         'lead_signature'    => $leadSignature,
         'auditee_signature' => $auditeeSignature,
+        'ass_head_signature'=> $assHeadApproval['signature_snapshot'] ?? null,
+        'cfo_signature'     => $cfoApproval['signature_snapshot'] ?? null,
+        'direktur_signature'=> $direkturApproval['signature_snapshot'] ?? null,
         'auditor_signature' => $temuan['auditor_signature_snapshot'] ?? (is_array($auditor) ? ($auditor['signature'] ?? null) : ($auditor->signature ?? null)),
         'auditor_role_id'   => $auditorRoleId
     ];
@@ -243,6 +268,13 @@ public function show($id)
             $this->temuanModel->update($temuan_id, [
                 'status_progress' => 'Closed'
             ]);
+
+            // Clear old management signatures so they sign the revised version
+            $db = \Config\Database::connect();
+            $db->table('approvals')
+               ->where('temuan_id', $temuan_id)
+               ->whereIn('level_urut', [3, 4, 5])
+               ->delete();
 
             $message = 'Bukti temuan disetujui. Temuan sekarang berstatus CLOSED dan masuk ke alur Tanda Tangan Laporan Final.';
             $aksi_log = 'Setujui Bukti (Closed)';

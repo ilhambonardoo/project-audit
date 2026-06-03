@@ -53,6 +53,17 @@ class Approval extends BaseController
             ->join('users', 'users.id = temuan.pic_id')
             ->where('status_progress', $statusFilter);
 
+        // Filter based on signature flow for top-tier roles
+        if ($roleId == 3) {
+            $builder->where("NOT EXISTS (SELECT 1 FROM approvals WHERE approvals.temuan_id = temuan.id AND approvals.level_urut = 3 AND approvals.signature_snapshot IS NOT NULL)");
+        } else if ($roleId == 5) {
+            $builder->where("EXISTS (SELECT 1 FROM approvals WHERE approvals.temuan_id = temuan.id AND approvals.level_urut = 3 AND approvals.signature_snapshot IS NOT NULL)");
+            $builder->where("NOT EXISTS (SELECT 1 FROM approvals WHERE approvals.temuan_id = temuan.id AND approvals.level_urut = 5 AND approvals.signature_snapshot IS NOT NULL)");
+        } else if ($roleId == 4) {
+            $builder->where("EXISTS (SELECT 1 FROM approvals WHERE approvals.temuan_id = temuan.id AND approvals.level_urut = 5 AND approvals.signature_snapshot IS NOT NULL)");
+            $builder->where("NOT EXISTS (SELECT 1 FROM approvals WHERE approvals.temuan_id = temuan.id AND approvals.level_urut = 4 AND approvals.signature_snapshot IS NOT NULL)");
+        }
+
         // Top 3 tier roles can see all departments
         // Role 3 (Ass Head), 5 (CFO), 4 (Direktur) do not have department filter anymore
         // Previously Role 3 had department filter.
@@ -99,9 +110,9 @@ class Approval extends BaseController
                 } else if ($roleId == 6) {
                     $nextStatus = 'Draft';
                     $actionLog = "Ditolak oleh Lead Auditor - Auditor harus revisi. Alasan: " . $notes;
-                } else if ($roleId == 3) {
+                } else if (in_array($roleId, [3, 4, 5])) {
                     $nextStatus = 'Sedang Berjalan';
-                    $actionLog  = "Ditolak oleh Ass Head Corp IA - Kembali ke Auditee. Alasan: " . $notes;
+                    $actionLog  = "Ditolak oleh Role " . $roleId . " - Kembali ke Auditee. Alasan: " . $notes;
                 } else {
                     $nextStatus = 'Closed';
                     $actionLog  = "Ditolak oleh Role " . $roleId . " - Kembali ke status Closed. Alasan: " . $notes;
@@ -140,17 +151,17 @@ class Approval extends BaseController
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus, 'catatan_revisi' => null]);
                         break;
                     case 3:
-                        $nextStatus = 'Selesai';
+                        $nextStatus = 'Closed';
                         $actionLog  = "Disetujui oleh Ass Head Corp IA - Lanjut ke CFO";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                     case 5:
-                        $nextStatus = 'Selesai';
+                        $nextStatus = 'Closed';
                         $actionLog  = "Disetujui oleh CFO - Lanjut ke Direktur";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
                     case 4:
-                        $nextStatus = 'Selesai';
+                        $nextStatus = 'Closed';
                         $actionLog  = "Disetujui oleh Direktur (Selesai)";
                         $db->table('temuan')->where('id', $temuanId)->update(['status_progress' => $nextStatus]);
                         break;
