@@ -51,18 +51,7 @@
 <?php endif; ?>
 
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="fw-light mb-1">Total Temuan</h6>
-                    <h2 class="fw-bold mb-0"><?= $total ?></h2>
-                </div>
-                <i class="bi bi-files display-4 opacity-50"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-4 bg-danger text-white h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
@@ -73,7 +62,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-4 bg-warning text-dark h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>
@@ -84,7 +73,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-4 bg-success text-white h-100">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>

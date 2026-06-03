@@ -22,9 +22,8 @@
           // Cek apakah tanda tangan wajib untuk role ini
           $roleId = session()->get('role_id');
           $hasSignature = session()->get('signature');
-          $needsSignature = !in_array($roleId, [2]); // Role 2 (Auditee) tidak butuh signature
           
-          if ($needsSignature && empty($hasSignature)) : 
+          if (empty($hasSignature)) : 
         ?>
           <div class="alert alert-warning border-0 shadow-sm mt-3 d-flex align-items-center" role="alert">
             <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-warning"></i>
