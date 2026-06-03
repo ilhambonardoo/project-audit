@@ -3,8 +3,12 @@
 <?= $this->section('content') ?>
 <div class="container-fluid mt-5 mb-5 px-5">
     <div class="row">
-        <div class="col-12 px-4 text-end mb-3">
-             <a href="<?= base_url('laporan/exportPdf/' . $pic['pic_id']) ?>" class="btn btn-danger" target="_blank">
+        <div class="col-12 px-4 text-end mb-3 d-flex align-items-center justify-content-end gap-2">
+            <div class="d-inline-flex align-items-center me-2">
+                <label for="inputNoUrut" class="me-2 mb-0 small fw-bold text-secondary">No. Urut:</label>
+                <input type="number" id="inputNoUrut" class="form-control form-control-sm" style="width: 80px;" value="5" min="1">
+            </div>
+            <a href="#" onclick="exportPdfWithNoUrut(<?= $pic['pic_id'] ?>)" class="btn btn-danger">
                 <i class="bi bi-file-earmark-pdf"></i> Ekspor PDF
             </a>
             <a href="<?= base_url('laporan/exportWord/' . $pic['pic_id']) ?>" class="btn btn-warning">
@@ -147,5 +151,12 @@
         margin-bottom: 5px;
     }
 </style>
+
+<script>
+function exportPdfWithNoUrut(picId) {
+    var noUrut = document.getElementById('inputNoUrut').value || 5;
+    window.open('<?= base_url('laporan/exportPdf/') ?>' + picId + '?no_urut=' + noUrut, '_blank');
+}
+</script>
 <?= $this->endSection() ?>
 

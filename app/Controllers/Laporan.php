@@ -59,6 +59,7 @@ class Laporan extends BaseController
         $data['temuan'] = $this->getLaporanDataByPic($pic_id);
         $data['pic'] = $data['temuan'][0];
         $data['is_pdf'] = true;
+        $data['no_urut'] = $this->request->getGet('no_urut') ?? 5;
 
         $html = view('laporan/pdf_template', $data);
 
